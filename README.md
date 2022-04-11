@@ -1,4 +1,5 @@
-# nana
+# Project "nana"
+
 Experimental GUI version of Nushell
 
 ## Getting started
