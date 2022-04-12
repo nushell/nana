@@ -1,0 +1,11 @@
+# built with npm install
+node_modules/
+
+# built each time
+public/build/bundle.js*
+
+# rust's target folders
+target/
+
+# mac's infamous .ds_store file
+.DS_Store
