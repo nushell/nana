@@ -75,6 +75,7 @@
 				output_html += "</tr></table>";
 			}
 		} else if (json_obj.Nothing) {
+			output_html += "<b></b>";
 		} else if (json_obj.Record) {
 			let fields = get_fields(json_obj);
 
@@ -156,7 +157,7 @@
 					}
 				}
 
-				console.log(cards);
+				addNewIOcard();
 			})
 			.catch((error) => {
 				for (const pos in cards) {
@@ -165,7 +166,6 @@
 						cards[pos].output = `<pre>${error}</pre>`;
 					}
 				}
-				console.log(cards);
 			});
 	}
 
