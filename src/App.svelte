@@ -3,7 +3,9 @@
 
 	export let name;
 
-	export let response_text;
+	let card_id = 1;
+
+	let cards = [{ id: 1, input: "", output: "" }];
 
 	function get_fields(record) {
 		let fields = [];
@@ -30,8 +32,12 @@
 			return string;
 		} else if (json_obj.Float) {
 			return json_obj.Float.val.toString();
+		} else if (json_obj.Bool) {
+			return json_obj.Bool.val.toString();
 		} else if (json_obj.Filesize) {
 			return json_obj.Filesize.val.toString();
+		} else if (json_obj.Duration) {
+			return json_obj.Duration.val.toString();
 		} else if (json_obj.Date) {
 			return json_obj.Date.val.toString();
 		} else if (json_obj.Binary) {
@@ -124,8 +130,6 @@
 				output_html += "</table>";
 			}
 		}
-		// }
-		// }
 		return output_html;
 	}
 	function convert_json_to_html(json_text) {
@@ -141,40 +145,71 @@
 
 	function runCommand(input) {
 		console.log(input);
+		let src = input.target.name;
 		invoke("simple_command_with_result", { argument: input.target.value })
 			.then((response) => {
 				let html_response = convert_json_to_html(response);
-				response_text = `${html_response}`;
+				for (const pos in cards) {
+					if ("input" + cards[pos].id === src) {
+						cards[pos].input = input.target.value;
+						cards[pos].output = `${html_response}`;
+					}
+				}
+
+				console.log(cards);
 			})
 			.catch((error) => {
-				response_text = `<pre>${error}</pre>`;
+				for (const pos in cards) {
+					if ("input" + cards[pos].id === src) {
+						cards[pos].input = input.target.value;
+						cards[pos].output = `<pre>${error}</pre>`;
+					}
+				}
+				console.log(cards);
 			});
+	}
+
+	function addNewIOcard() {
+		card_id += 1;
+		cards.push({ id: card_id, input: "", output: "" });
+		cards = cards;
+	}
+
+	function removeIOcard() {
+		cards.pop();
+		cards = cards;
+	}
+
+	function maybeAddNew(event) {
+		if (event.keyCode == 13 && event.shiftKey) {
+			addNewIOcard();
+		}
+	}
+
+	function init(el) {
+		el.focus();
 	}
 </script>
 
-<main>
+<main on:keydown={maybeAddNew}>
+	<button on:click={addNewIOcard}>add new</button>
+	<button on:click={removeIOcard}>remove</button>
+	<p><i>Keybindings: shift+enter adds a new card</i></p>
 	<h1>{name}</h1>
-
-	<!--
-	<code-input
-		style="resize: both; overflow: hidden; width: 90%;"
-		lang="JavaScript"
-		placeholder="Enter some JS!"
-		value="// Edit this right here!
-console.log('Hello, World!');
-let name = prompt('What\'s your name?');
-console.log('Hello, ' + name + '!');
-
-
-// The `resize: both; overflow: hidden;`
-// CSS has been applied to this, so...
-// You can resize this too! "
-	/>-->
-	<input name="inputOne" on:change={runCommand} />
-	<!-- <button on:click={runCommand}> click me </button> -->
-	<div class="output">
-		{@html response_text}
-	</div>
+	{#each cards as { id, input, output }}
+		<div class="card">
+			<input
+				class="input"
+				name="input{id}"
+				value={input}
+				use:init
+				on:change={runCommand}
+			/><br />
+			<div class="output">
+				{@html output}
+			</div>
+		</div>
+	{/each}
 </main>
 
 <style>
@@ -192,11 +227,23 @@ console.log('Hello, ' + name + '!');
 		font-weight: 100;
 	}
 
+	.input {
+		justify-content: center;
+		min-width: 400px;
+	}
+
 	.output {
 		display: flex;
 		justify-content: center;
 		text-align: left;
 		padding: 1em;
+		background-color: white;
+	}
+
+	.card {
+		background-color: aliceblue;
+		padding: 1em;
+		margin: 25px 0;
 	}
 
 	:global(.styled-table) {
