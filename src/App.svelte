@@ -19,6 +19,111 @@
 		return fields;
 	}
 
+	/// Format a duration in nanoseconds into a string
+	function humanDuration(dur) {
+		let sign;
+		let duration;
+		if (dur >= 0) {
+			sign = 1;
+			duration = dur;
+		} else {
+			sign = -1;
+			duration = -dur;
+		}
+
+		let micros = Math.floor(duration / 1000);
+		let nanos = duration % 1000;
+
+		let millis = Math.floor(micros / 1000);
+		micros = micros % 1000;
+
+		let secs = Math.floor(millis / 1000);
+		millis = millis % 1000;
+
+		let mins = Math.floor(secs / 60);
+		secs = secs % 60;
+
+		let hours = Math.floor(mins / 60);
+		mins = mins % 60;
+
+		let days = Math.floor(hours / 24);
+		hours = hours % 24;
+
+		let output_prep = "";
+
+		if (days != 0) {
+			output_prep += days + "day";
+		}
+
+		if (hours != 0) {
+			if (output_prep != "") {
+				output_prep += " ";
+			}
+			output_prep += hours + "hr";
+		}
+
+		if (mins != 0) {
+			if (output_prep != "") {
+				output_prep += " ";
+			}
+			output_prep += mins + "min";
+		}
+		// output 0sec for zero duration
+		if (duration == 0 || secs != 0) {
+			if (output_prep != "") {
+				output_prep += " ";
+			}
+			output_prep += secs + "sec";
+		}
+
+		if (millis != 0) {
+			if (output_prep != "") {
+				output_prep += " ";
+			}
+			output_prep += millis + "ms";
+		}
+
+		if (micros != 0) {
+			if (output_prep != "") {
+				output_prep += " ";
+			}
+			output_prep += micros + "us";
+		}
+
+		if (nanos != 0) {
+			if (output_prep != "") {
+				output_prep += " ";
+			}
+			output_prep += nanos + "ns";
+		}
+
+		return (sign == -1 ? "-" : "") + output_prep;
+	}
+
+	// from: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+	function humanFileSize(bytes, si = false, dp = 1) {
+		const thresh = si ? 1000 : 1024;
+
+		if (Math.abs(bytes) < thresh) {
+			return bytes + " B";
+		}
+
+		const units = si
+			? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+			: ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+		let u = -1;
+		const r = 10 ** dp;
+
+		do {
+			bytes /= thresh;
+			++u;
+		} while (
+			Math.round(Math.abs(bytes) * r) / r >= thresh &&
+			u < units.length - 1
+		);
+
+		return bytes.toFixed(dp) + " " + units[u];
+	}
 	function convert_json_obj_to_html(json_obj) {
 		let output_html = "";
 
@@ -35,11 +140,12 @@
 		} else if (json_obj.Bool) {
 			return json_obj.Bool.val.toString();
 		} else if (json_obj.Filesize) {
-			return json_obj.Filesize.val.toString();
+			return humanFileSize(json_obj.Filesize.val);
 		} else if (json_obj.Duration) {
-			return json_obj.Duration.val.toString();
+			return humanDuration(json_obj.Duration.val);
 		} else if (json_obj.Date) {
-			return json_obj.Date.val.toString();
+			let myDate = new Date(Date.parse(json_obj.Date.val));
+			return myDate.toLocaleString();
 		} else if (json_obj.Binary) {
 			let arr = json_obj.Binary.val;
 			if (
@@ -130,6 +236,8 @@
 				}
 				output_html += "</table>";
 			}
+		} else {
+			output_html = "$$$unknown$$$";
 		}
 		return output_html;
 	}
@@ -137,7 +245,7 @@
 		let json_obj = JSON.parse(json_text);
 
 		let output = convert_json_obj_to_html(json_obj);
-		if (output == "") {
+		if (output == "$$$unknown$$$") {
 			return json_text;
 		} else {
 			return output;
