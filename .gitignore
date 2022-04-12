@@ -4,6 +4,9 @@ node_modules/
 # built each time
 public/build/bundle.js*
 
+# npm's package lock
+package-lock.json
+
 # rust's target folders
 target/
 
