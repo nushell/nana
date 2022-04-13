@@ -124,7 +124,13 @@
 
 		return bytes.toFixed(dp) + " " + units[u];
 	}
-	function convert_json_obj_to_html(json_obj) {
+
+	/**
+	 * The helper that works with objects inside of other objects, converting them to their
+	 * html form
+	 * @param json_obj the object to convert
+	 */
+	function convert_json_obj_to_html_inner(json_obj) {
 		let output_html = "";
 
 		if (!json_obj) {
@@ -133,6 +139,8 @@
 			return json_obj.Int.val.toString();
 		} else if (json_obj.String) {
 			let string = json_obj.String.val;
+			string = string.replace(/</g, "&lt;");
+			string = string.replace(/>/g, "&gt;");
 			string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
 			return string;
 		} else if (json_obj.Float) {
@@ -191,7 +199,9 @@
 				output_html += "<th>" + fields[field] + "</th>";
 				output_html +=
 					"<td align=left>" +
-					convert_json_obj_to_html(json_obj.Record.vals[field]) +
+					convert_json_obj_to_html_inner(
+						json_obj.Record.vals[field]
+					) +
 					"</td>";
 				output_html += "</tr>";
 			}
@@ -214,7 +224,7 @@
 						for (const field in fields) {
 							output_html +=
 								"<td align=left>" +
-								convert_json_obj_to_html(
+								convert_json_obj_to_html_inner(
 									arr[value].Record.vals[field]
 								) +
 								"</td>";
@@ -230,7 +240,7 @@
 							value +
 							"</th>" +
 							"<td>" +
-							convert_json_obj_to_html(arr[value]) +
+							convert_json_obj_to_html_inner(arr[value]) +
 							"</td></tr>";
 					}
 				}
@@ -241,6 +251,37 @@
 		}
 		return output_html;
 	}
+
+	function convert_json_obj_to_html(json_obj) {
+		let output_html = "";
+
+		if (!json_obj) {
+			return "";
+		} else if (json_obj.String) {
+			let string = json_obj.String.val;
+			string = string.replace(/</g, "&lt;");
+			string = string.replace(/>/g, "&gt;");
+			// string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
+			return "<textarea>" + string + "</textarea>";
+		} else if (
+			json_obj.Int ||
+			json_obj.Float ||
+			json_obj.Bool ||
+			json_obj.Filesize ||
+			json_obj.Duration ||
+			json_obj.Date ||
+			json_obj.Binary ||
+			json_obj.Nothing ||
+			json_obj.Record ||
+			json_obj.List
+		) {
+			return convert_json_obj_to_html_inner(json_obj);
+		} else {
+			output_html = "$$$unknown$$$";
+		}
+		return output_html;
+	}
+
 	function convert_json_to_html(json_text) {
 		let json_obj = JSON.parse(json_text);
 
@@ -278,9 +319,17 @@
 	}
 
 	function addNewIOcard() {
-		card_id += 1;
-		cards.push({ id: card_id, input: "", output: "" });
-		cards = cards;
+		let last = "nothing";
+		cards.lastIndexOf;
+		for (const card in cards) {
+			last = cards[card].output;
+		}
+
+		if (last != "") {
+			card_id += 1;
+			cards.push({ id: card_id, input: "", output: "" });
+			cards = cards;
+		}
 	}
 
 	function removeIOcard() {
@@ -300,9 +349,6 @@
 </script>
 
 <main on:keydown={maybeAddNew}>
-	<button on:click={addNewIOcard}>add new</button>
-	<button on:click={removeIOcard}>remove</button>
-	<p><i>Keybindings: shift+enter adds a new card</i></p>
 	<h1>{name}</h1>
 	{#each cards as { id, input, output }}
 		<div class="card">
@@ -333,6 +379,13 @@
 		text-transform: uppercase;
 		font-size: 4em;
 		font-weight: 100;
+	}
+
+	:global(textarea) {
+		min-width: 400px;
+		min-height: 50px;
+		font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
+			DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 	}
 
 	.input {

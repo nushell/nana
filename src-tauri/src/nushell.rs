@@ -12,32 +12,6 @@ pub fn eval_nushell(
     fname: &str,
     input: PipelineData,
 ) -> Result<PipelineData, ShellError> {
-    // println!("{:#?}", source);
-    // if source == b"foo" {
-    //     use std::process::Command;
-    //     use nu_protocol::{Span, Value};
-    //     let command = Command::new("alacritty").arg("-e").arg("vim").spawn();
-    //     match command {
-    //         Ok(child) => {
-    //             return Ok(PipelineData::Value(
-    //                 Value::String {
-    //                     val: "running external".into(),
-    //                     span: Span { start: 0, end: 0 },
-    //                 },
-    //                 None,
-    //             ))
-    //         }
-    //         Err(e) => {
-    //             return Ok(PipelineData::Value(
-    //                 Value::String {
-    //                     val: e.to_string(),
-    //                     span: Span { start: 0, end: 0 },
-    //                 },
-    //                 None,
-    //             ))
-    //         }
-    //     }
-    // }
     let (block, delta) = {
         let mut working_set = StateWorkingSet::new(engine_state);
         let (output, _) = parse(&mut working_set, Some(fname), source, false, &[]);
