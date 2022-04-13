@@ -1,443 +1,457 @@
 <script>
-	import { invoke } from "@tauri-apps/api/tauri";
+    import { invoke } from "@tauri-apps/api/tauri";
 
-	export let name;
+    export let name;
 
-	let card_id = 1;
+    let card_id = 1;
 
-	let cards = [{ id: 1, input: "", output: "" }];
+    let cards = [{ id: 1, input: "", output: "" }];
 
-	function get_fields(record) {
-		let fields = [];
+    function get_fields(record) {
+        let fields = [];
 
-		if (record.Record) {
-			for (const field in record.Record.cols) {
-				fields.push(record.Record.cols[field]);
-			}
-		}
+        if (record.Record) {
+            for (const field in record.Record.cols) {
+                fields.push(record.Record.cols[field]);
+            }
+        }
 
-		return fields;
-	}
+        return fields;
+    }
 
-	/// Format a duration in nanoseconds into a string
-	function humanDuration(dur) {
-		let sign;
-		let duration;
-		if (dur >= 0) {
-			sign = 1;
-			duration = dur;
-		} else {
-			sign = -1;
-			duration = -dur;
-		}
+    /// Format a duration in nanoseconds into a string
+    function humanDuration(dur) {
+        let sign;
+        let duration;
+        if (dur >= 0) {
+            sign = 1;
+            duration = dur;
+        } else {
+            sign = -1;
+            duration = -dur;
+        }
 
-		let micros = Math.floor(duration / 1000);
-		let nanos = duration % 1000;
+        let micros = Math.floor(duration / 1000);
+        let nanos = duration % 1000;
 
-		let millis = Math.floor(micros / 1000);
-		micros = micros % 1000;
+        let millis = Math.floor(micros / 1000);
+        micros = micros % 1000;
 
-		let secs = Math.floor(millis / 1000);
-		millis = millis % 1000;
+        let secs = Math.floor(millis / 1000);
+        millis = millis % 1000;
 
-		let mins = Math.floor(secs / 60);
-		secs = secs % 60;
+        let mins = Math.floor(secs / 60);
+        secs = secs % 60;
 
-		let hours = Math.floor(mins / 60);
-		mins = mins % 60;
+        let hours = Math.floor(mins / 60);
+        mins = mins % 60;
 
-		let days = Math.floor(hours / 24);
-		hours = hours % 24;
+        let days = Math.floor(hours / 24);
+        hours = hours % 24;
 
-		let output_prep = "";
+        let output_prep = "";
 
-		if (days != 0) {
-			output_prep += days + "day";
-		}
+        if (days != 0) {
+            output_prep += days + "day";
+        }
 
-		if (hours != 0) {
-			if (output_prep != "") {
-				output_prep += " ";
-			}
-			output_prep += hours + "hr";
-		}
+        if (hours != 0) {
+            if (output_prep != "") {
+                output_prep += " ";
+            }
+            output_prep += hours + "hr";
+        }
 
-		if (mins != 0) {
-			if (output_prep != "") {
-				output_prep += " ";
-			}
-			output_prep += mins + "min";
-		}
-		// output 0sec for zero duration
-		if (duration == 0 || secs != 0) {
-			if (output_prep != "") {
-				output_prep += " ";
-			}
-			output_prep += secs + "sec";
-		}
+        if (mins != 0) {
+            if (output_prep != "") {
+                output_prep += " ";
+            }
+            output_prep += mins + "min";
+        }
+        // output 0sec for zero duration
+        if (duration == 0 || secs != 0) {
+            if (output_prep != "") {
+                output_prep += " ";
+            }
+            output_prep += secs + "sec";
+        }
 
-		if (millis != 0) {
-			if (output_prep != "") {
-				output_prep += " ";
-			}
-			output_prep += millis + "ms";
-		}
+        if (millis != 0) {
+            if (output_prep != "") {
+                output_prep += " ";
+            }
+            output_prep += millis + "ms";
+        }
 
-		if (micros != 0) {
-			if (output_prep != "") {
-				output_prep += " ";
-			}
-			output_prep += micros + "us";
-		}
+        if (micros != 0) {
+            if (output_prep != "") {
+                output_prep += " ";
+            }
+            output_prep += micros + "us";
+        }
 
-		if (nanos != 0) {
-			if (output_prep != "") {
-				output_prep += " ";
-			}
-			output_prep += nanos + "ns";
-		}
+        if (nanos != 0) {
+            if (output_prep != "") {
+                output_prep += " ";
+            }
+            output_prep += nanos + "ns";
+        }
 
-		return (sign == -1 ? "-" : "") + output_prep;
-	}
+        return (sign == -1 ? "-" : "") + output_prep;
+    }
 
-	// from: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
-	function humanFileSize(bytes, si = false, dp = 1) {
-		const thresh = si ? 1000 : 1024;
+    // from: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+    function humanFileSize(bytes, si = false, dp = 1) {
+        const thresh = si ? 1000 : 1024;
 
-		if (Math.abs(bytes) < thresh) {
-			return bytes + " B";
-		}
+        if (Math.abs(bytes) < thresh) {
+            return bytes + " B";
+        }
 
-		const units = si
-			? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-			: ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-		let u = -1;
-		const r = 10 ** dp;
+        const units = si
+            ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+            : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+        let u = -1;
+        const r = 10 ** dp;
 
-		do {
-			bytes /= thresh;
-			++u;
-		} while (
-			Math.round(Math.abs(bytes) * r) / r >= thresh &&
-			u < units.length - 1
-		);
+        do {
+            bytes /= thresh;
+            ++u;
+        } while (
+            Math.round(Math.abs(bytes) * r) / r >= thresh &&
+            u < units.length - 1
+        );
 
-		return bytes.toFixed(dp) + " " + units[u];
-	}
+        return bytes.toFixed(dp) + " " + units[u];
+    }
 
-	/**
-	 * The helper that works with objects inside of other objects, converting them to their
-	 * html form
-	 * @param json_obj the object to convert
-	 */
-	function convert_json_obj_to_html_inner(json_obj) {
-		let output_html = "";
+    /**
+     * The helper that works with objects inside of other objects, converting them to their
+     * html form
+     * @param json_obj the object to convert
+     */
+    function convert_json_obj_to_html_inner(json_obj) {
+        let output_html = "";
 
-		if (!json_obj) {
-			return "";
-		} else if (json_obj.Int) {
-			return json_obj.Int.val.toString();
-		} else if (json_obj.String) {
-			let string = json_obj.String.val;
-			string = string.replace(/</g, "&lt;");
-			string = string.replace(/>/g, "&gt;");
-			string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
-			return string;
-		} else if (json_obj.Float) {
-			return json_obj.Float.val.toString();
-		} else if (json_obj.Bool) {
-			return json_obj.Bool.val.toString();
-		} else if (json_obj.Filesize) {
-			return humanFileSize(json_obj.Filesize.val);
-		} else if (json_obj.Duration) {
-			return humanDuration(json_obj.Duration.val);
-		} else if (json_obj.Date) {
-			let myDate = new Date(Date.parse(json_obj.Date.val));
-			return myDate.toLocaleString();
-		} else if (json_obj.Binary) {
-			let arr = json_obj.Binary.val;
-			if (
-				arr[0] == 0x89 &&
-				arr[1] == 0x50 &&
-				arr[2] == 0x4e &&
-				arr[3] == 0x47
-			) {
-				// PNG
-				let u8 = new Uint8Array(arr);
-				let myOut = btoa(String.fromCharCode.apply(null, u8));
-				output_html +=
-					'<img src="data:image/png;base64,' + myOut + '">';
-			} else {
-				output_html += '<table class="styled-table"><tr>';
+        if (!json_obj) {
+            return "";
+        } else if (json_obj.Int) {
+            return json_obj.Int.val.toString();
+        } else if (json_obj.String) {
+            let string = json_obj.String.val;
+            string = string.replace(/</g, "&lt;");
+            string = string.replace(/>/g, "&gt;");
+            string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
+            return string;
+        } else if (json_obj.Float) {
+            return json_obj.Float.val.toString();
+        } else if (json_obj.Bool) {
+            return json_obj.Bool.val.toString();
+        } else if (json_obj.Filesize) {
+            return humanFileSize(json_obj.Filesize.val);
+        } else if (json_obj.Duration) {
+            return humanDuration(json_obj.Duration.val);
+        } else if (json_obj.Date) {
+            let myDate = new Date(Date.parse(json_obj.Date.val));
+            return myDate.toLocaleString();
+        } else if (json_obj.Binary) {
+            let arr = json_obj.Binary.val;
+            if (
+                arr[0] == 0x89 &&
+                arr[1] == 0x50 &&
+                arr[2] == 0x4e &&
+                arr[3] == 0x47
+            ) {
+                // PNG
+                let u8 = new Uint8Array(arr);
+                let myOut = btoa(String.fromCharCode.apply(null, u8));
+                output_html +=
+                    '<img src="data:image/png;base64,' + myOut + '">';
+            } else {
+                output_html += '<table class="styled-table"><tr>';
 
-				let arrLen = arr.length;
-				output_html += "<th></th>";
-				for (let idx = 0; idx < 16; ++idx) {
-					output_html += "<th>" + idx.toString(16) + "</th>";
-				}
-				output_html += "</tr><tr><th>0</td>";
+                let arrLen = arr.length;
+                output_html += "<th></th>";
+                for (let idx = 0; idx < 16; ++idx) {
+                    output_html += "<th>" + idx.toString(16) + "</th>";
+                }
+                output_html += "</tr><tr><th>0</td>";
 
-				for (let idx = 0; idx < arrLen; ++idx) {
-					if (idx > 0 && idx % 16 == 0) {
-						output_html +=
-							"</tr><tr><th>" +
-							((idx / 16) * 16).toString(16) +
-							"</th>";
-					}
-					output_html += "<td>" + arr[idx].toString(16) + "</td>";
-				}
-				output_html += "</tr></table>";
-			}
-		} else if (json_obj.Nothing) {
-			output_html += "<b></b>";
-		} else if (json_obj.Record) {
-			let fields = get_fields(json_obj);
+                for (let idx = 0; idx < arrLen; ++idx) {
+                    if (idx > 0 && idx % 16 == 0) {
+                        output_html +=
+                            "</tr><tr><th>" +
+                            ((idx / 16) * 16).toString(16) +
+                            "</th>";
+                    }
+                    output_html += "<td>" + arr[idx].toString(16) + "</td>";
+                }
+                output_html += "</tr></table>";
+            }
+        } else if (json_obj.Nothing) {
+            output_html += "<b></b>";
+        } else if (json_obj.Record) {
+            let fields = get_fields(json_obj);
 
-			output_html += '<table class="styled-table">';
-			for (const field in fields) {
-				output_html += "<tr>";
-				output_html += "<th>" + fields[field] + "</th>";
-				output_html +=
-					"<td align=left>" +
-					convert_json_obj_to_html_inner(
-						json_obj.Record.vals[field]
-					) +
-					"</td>";
-				output_html += "</tr>";
-			}
-			output_html += "</table>";
-		} else if (json_obj.List) {
-			let arr = json_obj.List.vals;
+            output_html += '<table class="styled-table">';
+            for (const field in fields) {
+                output_html += "<tr>";
+                output_html += "<th>" + fields[field] + "</th>";
+                output_html +=
+                    "<td align=left>" +
+                    convert_json_obj_to_html_inner(
+                        json_obj.Record.vals[field]
+                    ) +
+                    "</td>";
+                output_html += "</tr>";
+            }
+            output_html += "</table>";
+        } else if (json_obj.List) {
+            let arr = json_obj.List.vals;
 
-			if (arr.length > 0) {
-				let fields = get_fields(arr[0]);
+            if (arr.length > 0) {
+                let fields = get_fields(arr[0]);
 
-				output_html += '<table class="styled-table">';
-				if (fields.length > 0) {
-					output_html += "<tr>";
-					for (const field in fields) {
-						output_html += "<th>" + fields[field] + "</th>";
-					}
-					output_html += "</tr>";
-					for (const value in arr) {
-						output_html += "<tr>";
-						for (const field in fields) {
-							output_html +=
-								"<td align=left>" +
-								convert_json_obj_to_html_inner(
-									arr[value].Record.vals[field]
-								) +
-								"</td>";
-						}
-						output_html += "</tr>";
-					}
-				} else {
-					output_html += "<tr></tr>";
-					for (const value in arr) {
-						output_html +=
-							"<tr>" +
-							"<th>" +
-							value +
-							"</th>" +
-							"<td>" +
-							convert_json_obj_to_html_inner(arr[value]) +
-							"</td></tr>";
-					}
-				}
-				output_html += "</table>";
-			}
-		} else {
-			output_html = "$$$unknown$$$";
-		}
-		return output_html;
-	}
+                output_html += '<table class="styled-table">';
+                if (fields.length > 0) {
+                    output_html += "<tr>";
+                    for (const field in fields) {
+                        output_html += "<th>" + fields[field] + "</th>";
+                    }
+                    output_html += "</tr>";
+                    for (const value in arr) {
+                        output_html += "<tr>";
+                        for (const field in fields) {
+                            output_html +=
+                                "<td align=left>" +
+                                convert_json_obj_to_html_inner(
+                                    arr[value].Record.vals[field]
+                                ) +
+                                "</td>";
+                        }
+                        output_html += "</tr>";
+                    }
+                } else {
+                    output_html += "<tr></tr>";
+                    for (const value in arr) {
+                        output_html +=
+                            "<tr>" +
+                            "<th>" +
+                            value +
+                            "</th>" +
+                            "<td>" +
+                            convert_json_obj_to_html_inner(arr[value]) +
+                            "</td></tr>";
+                    }
+                }
+                output_html += "</table>";
+            }
+        } else {
+            output_html = "$$$unknown$$$";
+        }
+        return output_html;
+    }
 
-	function convert_json_obj_to_html(json_obj) {
-		let output_html = "";
+    function convert_json_obj_to_html(json_obj) {
+        let output_html = "";
 
-		if (!json_obj) {
-			return "";
-		} else if (json_obj.String) {
-			let string = json_obj.String.val;
-			string = string.replace(/</g, "&lt;");
-			string = string.replace(/>/g, "&gt;");
-			// string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
-			return "<textarea>" + string + "</textarea>";
-		} else if (
-			json_obj.Int ||
-			json_obj.Float ||
-			json_obj.Bool ||
-			json_obj.Filesize ||
-			json_obj.Duration ||
-			json_obj.Date ||
-			json_obj.Binary ||
-			json_obj.Nothing ||
-			json_obj.Record ||
-			json_obj.List
-		) {
-			return convert_json_obj_to_html_inner(json_obj);
-		} else {
-			output_html = "$$$unknown$$$";
-		}
-		return output_html;
-	}
+        if (!json_obj) {
+            return "";
+        } else if (json_obj.String) {
+            let string = json_obj.String.val;
+            string = string.replace(/</g, "&lt;");
+            string = string.replace(/>/g, "&gt;");
+            // string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
+            return "<textarea>" + string + "</textarea>";
+        } else if (
+            json_obj.Int ||
+            json_obj.Float ||
+            json_obj.Bool ||
+            json_obj.Filesize ||
+            json_obj.Duration ||
+            json_obj.Date ||
+            json_obj.Binary ||
+            json_obj.Nothing ||
+            json_obj.Record ||
+            json_obj.List
+        ) {
+            return convert_json_obj_to_html_inner(json_obj);
+        } else {
+            output_html = "$$$unknown$$$";
+        }
+        return output_html;
+    }
 
-	function convert_json_to_html(json_text) {
-		let json_obj = JSON.parse(json_text);
+    function convert_json_to_html(json_text) {
+        let json_obj = JSON.parse(json_text);
 
-		let output = convert_json_obj_to_html(json_obj);
-		if (output == "$$$unknown$$$") {
-			return json_text;
-		} else {
-			return output;
-		}
-	}
+        let output = convert_json_obj_to_html(json_obj);
+        if (output == "$$$unknown$$$") {
+            return json_text;
+        } else {
+            return output;
+        }
+    }
 
-	function runCommand(input) {
-		console.log(input);
-		let src = input.target.name;
-		invoke("simple_command_with_result", { argument: input.target.value })
-			.then((response) => {
-				let html_response = convert_json_to_html(response);
-				for (const pos in cards) {
-					if ("input" + cards[pos].id === src) {
-						cards[pos].input = input.target.value;
-						cards[pos].output = `${html_response}`;
-					}
-				}
+    function runCommand(input) {
+        console.log(input);
+        let src = input.target.name;
+        invoke("simple_command_with_result", { argument: input.target.value })
+            .then((response) => {
+                let html_response = convert_json_to_html(response);
+                for (const pos in cards) {
+                    if ("input" + cards[pos].id === src) {
+                        cards[pos].input = input.target.value;
+                        cards[pos].output = `${html_response}`;
+                    }
+                }
 
-				addNewIOcard();
-			})
-			.catch((error) => {
-				for (const pos in cards) {
-					if ("input" + cards[pos].id === src) {
-						cards[pos].input = input.target.value;
-						cards[pos].output = `<pre>${error}</pre>`;
-					}
-				}
-			});
-	}
+                addNewIOcard();
+            })
+            .catch((error) => {
+                for (const pos in cards) {
+                    if ("input" + cards[pos].id === src) {
+                        cards[pos].input = input.target.value;
+                        cards[pos].output = `<pre>${error}</pre>`;
+                    }
+                }
+            });
+    }
 
-	function addNewIOcard() {
-		let last = "nothing";
-		cards.lastIndexOf;
-		for (const card in cards) {
-			last = cards[card].output;
-		}
+    function addNewIOcard() {
+        let last = "nothing";
+        cards.lastIndexOf;
+        for (const card in cards) {
+            last = cards[card].output;
+        }
 
-		if (last != "") {
-			card_id += 1;
-			cards.push({ id: card_id, input: "", output: "" });
-			cards = cards;
-		}
-	}
+        if (last != "") {
+            card_id += 1;
+            cards.push({ id: card_id, input: "", output: "" });
+            cards = cards;
+        }
+    }
 
-	function removeIOcard() {
-		cards.pop();
-		cards = cards;
-	}
+    function removeIOcard() {
+        cards.pop();
+        cards = cards;
+    }
 
-	function maybeAddNew(event) {
-		if (event.keyCode == 13 && event.shiftKey) {
-			addNewIOcard();
-		}
-	}
+    function maybeAddNew(event) {
+        if (event.keyCode == 13 && event.shiftKey) {
+            addNewIOcard();
+        }
+    }
 
-	function init(el) {
-		el.focus();
-	}
+    function init(el) {
+        el.focus();
+    }
 </script>
 
 <main on:keydown={maybeAddNew}>
-	<h1>{name}</h1>
-	{#each cards as { id, input, output }}
-		<div class="card">
-			<input
-				class="input"
-				name="input{id}"
-				value={input}
-				use:init
-				on:change={runCommand}
-			/><br />
-			<div class="output">
-				{@html output}
-			</div>
-		</div>
-	{/each}
+    <h1>{name}</h1>
+    {#each cards as { id, input, output }}
+        <table align="center">
+            <div class="card">
+                <tr><th>&nbsp;#&nbsp;</th><th>Command Palette</th></tr>
+                <tr
+                    ><td>{id}</td>
+                    <input
+                        class="input"
+                        name="input{id}"
+                        value={input}
+                        use:init
+                        on:change={runCommand}
+                    /></tr
+                ><br />
+                <tr>
+                    <div class="output">
+                        {@html output}
+                    </div>
+                </tr>
+            </div>
+        </table>
+    {/each}
 </main>
 
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 800px;
-		margin: 0 auto;
-	}
+    main {
+        text-align: center;
+        padding: 1em;
+        max-width: 800px;
+        margin: 0 auto;
+    }
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
+    h1 {
+        color: #ff3e00;
+        text-transform: uppercase;
+        font-size: 4em;
+        font-weight: 100;
+    }
 
-	:global(textarea) {
-		min-width: 400px;
-		min-height: 50px;
-		font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
-			DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-	}
+    :global(textarea) {
+        min-width: 400px;
+        min-height: 50px;
+        font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
+            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    }
 
-	.input {
-		justify-content: center;
-		min-width: 400px;
-	}
+    .input {
+        justify-content: center;
+        min-width: 600px;
+        align-content: center;
+    }
 
-	.output {
-		display: flex;
-		justify-content: center;
-		text-align: left;
-		padding: 1em;
-		background-color: white;
-	}
+    .output {
+        display: flex;
+        justify-content: left;
+        text-align: left;
+        padding: 1em;
+        background-color: white;
+    }
 
-	.card {
-		background-color: aliceblue;
-		padding: 1em;
-		margin: 25px 0;
-	}
+    .card {
+        background-color: aliceblue;
+        padding: 1em;
+        margin: 25px 0;
+    }
 
-	:global(.styled-table) {
-		border-collapse: collapse;
-		margin: 25px 0;
-		font-size: 0.9em;
-		font-family: sans-serif;
-		/* min-width: 300px; */
-		max-width: 100%;
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-	}
+    :global(.styled-table) {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        max-width: 100%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
 
-	:global(.styled-table thead tr) {
-		background-color: #009879;
-		color: #ffffff;
-		text-align: left;
-	}
-	:global(.styled-table th),
-	:global(.styled-table td) {
-		padding: 12px 15px;
-	}
+    :global(.styled-table thead tr) {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: left;
+    }
+    :global(.styled-table th),
+    :global(.styled-table td) {
+        padding: 12px 15px;
+    }
 
-	:global(.styled-table tbody tr) {
-		border-bottom: 1px solid #dddddd;
-	}
+    :global(.styled-table tbody tr) {
+        border-bottom: 1px solid #dddddd;
+    }
 
-	:global(.styled-table tbody tr:nth-of-type(even)) {
-		background-color: #f3f3f3;
-	}
+    :global(.styled-table tbody tr:nth-of-type(even)) {
+        background-color: #f3f3f3;
+    }
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
+    @media (min-width: 640px) {
+        main {
+            max-width: none;
+        }
+    }
+
+    /* table,
+    th,
+    td {
+        border: 1px solid gainsboro;
+    } */
 </style>
