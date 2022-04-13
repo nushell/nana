@@ -2541,6 +2541,7 @@ dependencies = [
 name = "nana"
 version = "0.1.0"
 dependencies = [
+ "itertools",
  "nu-cli",
  "nu-command",
  "nu-engine",
@@ -2548,6 +2549,8 @@ dependencies = [
  "nu-path",
  "nu-protocol",
  "parking_lot 0.12.0",
+ "pathdiff",
+ "regex",
  "serde",
  "serde_json",
  "strip-ansi-escapes",

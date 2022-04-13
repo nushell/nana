@@ -25,5 +25,5 @@ pub fn eval_nushell(
         return Err(err);
     }
 
-    eval_block(engine_state, stack, &block, input, true, true)
+    eval_block(engine_state, stack, &block, input, false, true)
 }

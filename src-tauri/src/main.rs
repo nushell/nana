@@ -24,10 +24,27 @@ pub struct MyState {
 // }
 
 mod nushell;
+mod run_external;
 
 fn main() {
     let cwd = std::env::current_dir().unwrap();
-    let mut engine_state = nu_command::create_default_context(cwd);
+    let mut engine_state = nu_command::create_default_context(&cwd);
+
+    let delta = {
+        let mut working_set = StateWorkingSet::new(&engine_state);
+
+        macro_rules! bind_command {
+            ( $( $command:expr ),* $(,)? ) => {
+                $( working_set.add_decl(Box::new($command)); )*
+            };
+        }
+
+        bind_command!(crate::run_external::External);
+
+        working_set.render()
+    };
+    let _ = engine_state.merge_delta(delta, None, &cwd);
+
     gather_parent_env_vars(&mut engine_state);
 
     let mut stack = Stack::new();
