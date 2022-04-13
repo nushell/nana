@@ -1,5 +1,7 @@
 <script>
     import { invoke } from "@tauri-apps/api/tauri";
+    import { default as AnsiUp } from "ansi_up";
+    import hasAnsi from "has-ansi";
 
     export let name;
 
@@ -286,10 +288,11 @@
         let json_obj = JSON.parse(json_text);
 
         let output = convert_json_obj_to_html(json_obj);
-        if (output == "$$$unknown$$$") {
+        let ansi = ansi_to_html(output);
+        if (ansi == "$$$unknown$$$") {
             return json_text;
         } else {
-            return output;
+            return ansi;
         }
     }
 
@@ -345,6 +348,17 @@
 
     function init(el) {
         el.focus();
+    }
+
+    function ansi_to_html(text_str) {
+        if (hasAnsi(text_str)) {
+            var ansi_up = new AnsiUp();
+            let html = ansi_up.ansi_to_html(text_str);
+            console.log(html);
+            return html;
+        } else {
+            return text_str;
+        }
     }
 </script>
 
@@ -433,6 +447,7 @@
     :global(.styled-table th),
     :global(.styled-table td) {
         padding: 12px 15px;
+        border: 2px solid green;
     }
 
     :global(.styled-table tbody tr) {
