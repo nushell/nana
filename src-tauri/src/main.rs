@@ -111,14 +111,11 @@ fn simple_command_with_result(argument: String, state: State<MyState>) -> Result
             }
         }
         Err(e) => {
-            use strip_ansi_escapes::strip;
-
             let working_set = StateWorkingSet::new(&engine_state);
 
             let error_msg = format!("{:?}", CliError(&e, &working_set));
 
-            let result = strip(error_msg).expect("internal error: can't strip ansi from error");
-            Err(String::from_utf8_lossy(&result).to_string())
+            Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
         }
     }
 }
