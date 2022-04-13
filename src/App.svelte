@@ -2,6 +2,7 @@
     import { invoke } from "@tauri-apps/api/tauri";
     import { default as AnsiUp } from "ansi_up";
     import hasAnsi from "has-ansi";
+    import { text } from "svelte/internal";
 
     export let name;
 
@@ -261,8 +262,10 @@
             return "";
         } else if (json_obj.String) {
             let string = json_obj.String.val;
+
             string = string.replace(/</g, "&lt;");
             string = string.replace(/>/g, "&gt;");
+            string = "<pre>" + string + "</pre>";
             // string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
             // return "<textarea>" + string + "</textarea>";
             return string;
@@ -316,7 +319,9 @@
                 for (const pos in cards) {
                     if ("input" + cards[pos].id === src) {
                         cards[pos].input = input.target.value;
-                        cards[pos].output = `<pre>${error}</pre>`;
+                        let ansi = ansi_to_html(error);
+
+                        cards[pos].output = `<pre>${ansi}</pre>`;
                     }
                 }
             });
@@ -336,14 +341,15 @@
         }
     }
 
-    function removeIOcard() {
-        cards.pop();
-        cards = cards;
-    }
-
-    function maybeAddNew(event) {
-        if (event.keyCode == 13 && event.shiftKey) {
-            addNewIOcard();
+    function closeCard(id) {
+        console.log(id);
+        for (const pos in cards) {
+            if (cards[pos].id === id) {
+                cards.splice(pos, 1);
+                cards = cards;
+                console.log(cards);
+                return;
+            }
         }
     }
 
@@ -354,38 +360,38 @@
     function ansi_to_html(text_str) {
         if (hasAnsi(text_str)) {
             var ansi_up = new AnsiUp();
+
             let html = ansi_up.ansi_to_html(text_str);
-            console.log(html);
-            return html;
+            let linked_html = html.replace(
+                /]8;;(.+)\\(.+)]8;;\\/,
+                function (match, p1, p2) {
+                    return '<a href="' + p1 + '">' + p2 + "</a>";
+                }
+            );
+            return linked_html;
         } else {
             return text_str;
         }
     }
 </script>
 
-<main on:keydown={maybeAddNew}>
+<main>
     <h1>{name}</h1>
     {#each cards as { id, input, output }}
-        <table align="center">
-            <div class="card">
-                <tr><th>&nbsp;#&nbsp;</th><th>Command Palette</th></tr>
-                <tr
-                    ><td>{id}</td>
-                    <input
-                        class="input"
-                        name="input{id}"
-                        value={input}
-                        use:init
-                        on:change={runCommand}
-                    /></tr
-                ><br />
-                <tr>
-                    <div class="output">
-                        {@html output}
-                    </div>
-                </tr>
+        <div class="card">
+            {id}:&nbsp;
+            <input
+                class="input"
+                name="input{id}"
+                value={input}
+                use:init
+                on:change={runCommand}
+            />
+            <div class="closemarker" on:click={closeCard(id)}>x</div>
+            <div class="output">
+                {@html output}
             </div>
-        </table>
+        </div>
     {/each}
 </main>
 
@@ -429,13 +435,34 @@
         background-color: aliceblue;
         padding: 1em;
         margin: 25px 0;
+        position: relative;
     }
 
-    :global(.styled-table) {
+    .closemarker {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    :global(.string-content) {
+        align-content: center;
         border-collapse: collapse;
         margin: 25px 0;
         font-size: 0.9em;
         font-family: sans-serif;
+        min-width: 100%;
+        max-width: 100%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    :global(.styled-table) {
+        align-content: center;
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 100%;
         max-width: 100%;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     }
@@ -448,7 +475,6 @@
     :global(.styled-table th),
     :global(.styled-table td) {
         padding: 12px 15px;
-        border: 2px solid green;
     }
 
     :global(.styled-table tbody tr) {
@@ -464,10 +490,4 @@
             max-width: none;
         }
     }
-
-    /* table,
-    th,
-    td {
-        border: 1px solid gainsboro;
-    } */
 </style>
