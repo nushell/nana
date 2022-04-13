@@ -264,7 +264,8 @@
             string = string.replace(/</g, "&lt;");
             string = string.replace(/>/g, "&gt;");
             // string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
-            return "<textarea>" + string + "</textarea>";
+            // return "<textarea>" + string + "</textarea>";
+            return string;
         } else if (
             json_obj.Int ||
             json_obj.Float ||
