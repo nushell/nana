@@ -125,7 +125,7 @@ impl ExternalCommand {
         {
             match process.spawn() {
                 Err(_) => {
-                    let mut process = self.create_process(&input, true, head)?;
+                    let mut process = self.create_process(&input, true, false, head)?;
                     child = process.spawn();
                 }
                 Ok(process) => {
