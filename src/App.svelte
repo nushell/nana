@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { invoke } from "@tauri-apps/api/tauri";
     import { default as AnsiUp } from "ansi_up";
     import hasAnsi from "has-ansi";
@@ -265,8 +265,8 @@
 
             string = string.replace(/</g, "&lt;");
             string = string.replace(/>/g, "&gt;");
-            string = "<pre>" + string + "</pre>";
-            // string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
+            // string = "<pre>" + string + "</pre>";
+            string = string.replace(/(?:\r\n|\r|\n)/g, "<br>");
             // return "<textarea>" + string + "</textarea>";
             return string;
         } else if (
@@ -345,7 +345,7 @@
         console.log(id);
         for (const pos in cards) {
             if (cards[pos].id === id) {
-                cards.splice(pos, 1);
+                cards.splice(cards[pos].id-1, 1);
                 cards = cards;
                 console.log(cards);
                 return;
@@ -373,12 +373,37 @@
             return text_str;
         }
     }
+
+	function onArrows(ev: KeyboardEvent) {
+        console.log("onarrows");
+        console.log(ev);
+		let key = ev.key;
+		// let tmp: Nullable<HTMLElement>;
+		// let target = ev.target as HTMLElement;
+        if (key === "ArrowLeft") {
+			// LEFT ARROW
+            console.log("left arrow");
+			// ev.preventDefault();
+			// tmp = target.previousElementSibling as HTMLElement;
+			// if (tmp) tmp.click(),tmp.focus();
+        } else if (key === "ArrowUp") {
+            console.log("up arrow");
+        } else if (key === "ArrowRight") {
+			// RIGHT ARROW
+            console.log("right arrow");
+			// ev.preventDefault();
+			// tmp = target.nextElementSibling as HTMLElement;
+			// if (tmp) tmp.click(),tmp.focus();
+		} else if (key === "ArrowDown") {
+            console.log("down arrow");
+        } 
+	}
 </script>
 
 <main>
     <h1>{name}</h1>
     {#each cards as { id, input, output }}
-        <div class="card">
+        <div class="card" on:keydown={onArrows}>
             {id}:&nbsp;
             <input
                 class="input"
@@ -386,8 +411,8 @@
                 value={input}
                 use:init
                 on:change={runCommand}
-            />
-            <div class="closemarker" on:click={closeCard(id)}>x</div>
+                />
+            <div class="closemarker" on:click={() => closeCard(id)}>x</div>
             <div class="output">
                 {@html output}
             </div>
