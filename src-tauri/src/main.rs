@@ -102,6 +102,13 @@ fn simple_command_with_result(argument: String, state: State<MyState>) -> Result
     let result = result.map(|x| x.into_value(Span { start: 0, end: 0 }));
 
     match result {
+        Ok(Value::Error { error: e }) => {
+            let working_set = StateWorkingSet::new(&engine_state);
+
+            let error_msg = format!("{:?}", CliError(&e, &working_set));
+
+            Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
+        }
         Ok(value) => {
             let output = serde_json::to_string(&value);
 
