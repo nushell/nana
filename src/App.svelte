@@ -341,11 +341,11 @@
         }
     }
 
-    function closeCard(id) {
+    function closeCard(id: number) {
         console.log(id);
         for (const pos in cards) {
             if (cards[pos].id === id) {
-                cards.splice(cards[pos].id-1, 1);
+                cards.splice(parseInt(pos), 1);
                 cards = cards;
                 console.log(cards);
                 return;
@@ -374,30 +374,30 @@
         }
     }
 
-	function onArrows(ev: KeyboardEvent) {
+    function onArrows(ev: KeyboardEvent) {
         console.log("onarrows");
         console.log(ev);
-		let key = ev.key;
-		// let tmp: Nullable<HTMLElement>;
-		// let target = ev.target as HTMLElement;
+        let key = ev.key;
+        // let tmp: Nullable<HTMLElement>;
+        // let target = ev.target as HTMLElement;
         if (key === "ArrowLeft") {
-			// LEFT ARROW
+            // LEFT ARROW
             console.log("left arrow");
-			// ev.preventDefault();
-			// tmp = target.previousElementSibling as HTMLElement;
-			// if (tmp) tmp.click(),tmp.focus();
+            // ev.preventDefault();
+            // tmp = target.previousElementSibling as HTMLElement;
+            // if (tmp) tmp.click(),tmp.focus();
         } else if (key === "ArrowUp") {
             console.log("up arrow");
         } else if (key === "ArrowRight") {
-			// RIGHT ARROW
+            // RIGHT ARROW
             console.log("right arrow");
-			// ev.preventDefault();
-			// tmp = target.nextElementSibling as HTMLElement;
-			// if (tmp) tmp.click(),tmp.focus();
-		} else if (key === "ArrowDown") {
+            // ev.preventDefault();
+            // tmp = target.nextElementSibling as HTMLElement;
+            // if (tmp) tmp.click(),tmp.focus();
+        } else if (key === "ArrowDown") {
             console.log("down arrow");
-        } 
-	}
+        }
+    }
 </script>
 
 <main>
@@ -411,7 +411,7 @@
                 value={input}
                 use:init
                 on:change={runCommand}
-                />
+            />
             <div class="closemarker" on:click={() => closeCard(id)}>x</div>
             <div class="output">
                 {@html output}
