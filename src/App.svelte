@@ -10,7 +10,7 @@
 
     let cards = [{ id: 1, input: "", output: "" }];
 
-    function get_fields(record) {
+    function get_fields(record: any) {
         let fields = [];
 
         if (record.Record) {
@@ -23,7 +23,7 @@
     }
 
     /// Format a duration in nanoseconds into a string
-    function humanDuration(dur) {
+    function humanDuration(dur: number) {
         let sign;
         let duration;
         if (dur >= 0) {
@@ -104,7 +104,7 @@
     }
 
     // from: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
-    function humanFileSize(bytes, si = false, dp = 1) {
+    function humanFileSize(bytes: number, si = false, dp = 1) {
         const thresh = si ? 1000 : 1024;
 
         if (Math.abs(bytes) < thresh) {
@@ -133,7 +133,7 @@
      * html form
      * @param json_obj the object to convert
      */
-    function convert_json_obj_to_html_inner(json_obj) {
+    function convert_json_obj_to_html_inner(json_obj: any) {
         let output_html = "";
 
         if (!json_obj) {
@@ -255,7 +255,7 @@
         return output_html;
     }
 
-    function convert_json_obj_to_html(json_obj) {
+    function convert_json_obj_to_html(json_obj: any) {
         let output_html = "";
 
         if (!json_obj) {
@@ -288,7 +288,7 @@
         return output_html;
     }
 
-    function convert_json_to_html(json_text) {
+    function convert_json_to_html(json_text: string) {
         let json_obj = JSON.parse(json_text);
 
         let output = convert_json_obj_to_html(json_obj);
@@ -300,11 +300,11 @@
         }
     }
 
-    function runCommand(input) {
+    function runCommand(input: any) {
         console.log(input);
         let src = input.target.name;
         invoke("simple_command_with_result", { argument: input.target.value })
-            .then((response) => {
+            .then((response: string) => {
                 let html_response = convert_json_to_html(response);
                 for (const pos in cards) {
                     if ("input" + cards[pos].id === src) {
@@ -353,11 +353,11 @@
         }
     }
 
-    function init(el) {
+    function init(el: HTMLElement) {
         el.focus();
     }
 
-    function ansi_to_html(text_str) {
+    function ansi_to_html(text_str: string) {
         if (hasAnsi(text_str)) {
             var ansi_up = new AnsiUp();
 
