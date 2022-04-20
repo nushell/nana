@@ -6,7 +6,11 @@
 
     export let name;
 
-    let card_id = 1;
+    let cardId = 1;
+
+    // History related values
+    let historyPos = 0;
+    let historyContent = "";
 
     let cards = [{ id: 1, input: "", output: "" }];
 
@@ -52,55 +56,55 @@
         let days = Math.floor(hours / 24);
         hours = hours % 24;
 
-        let output_prep = "";
+        let outputPrep = "";
 
         if (days != 0) {
-            output_prep += days + "day";
+            outputPrep += days + "day";
         }
 
         if (hours != 0) {
-            if (output_prep != "") {
-                output_prep += " ";
+            if (outputPrep != "") {
+                outputPrep += " ";
             }
-            output_prep += hours + "hr";
+            outputPrep += hours + "hr";
         }
 
         if (mins != 0) {
-            if (output_prep != "") {
-                output_prep += " ";
+            if (outputPrep != "") {
+                outputPrep += " ";
             }
-            output_prep += mins + "min";
+            outputPrep += mins + "min";
         }
         // output 0sec for zero duration
         if (duration == 0 || secs != 0) {
-            if (output_prep != "") {
-                output_prep += " ";
+            if (outputPrep != "") {
+                outputPrep += " ";
             }
-            output_prep += secs + "sec";
+            outputPrep += secs + "sec";
         }
 
         if (millis != 0) {
-            if (output_prep != "") {
-                output_prep += " ";
+            if (outputPrep != "") {
+                outputPrep += " ";
             }
-            output_prep += millis + "ms";
+            outputPrep += millis + "ms";
         }
 
         if (micros != 0) {
-            if (output_prep != "") {
-                output_prep += " ";
+            if (outputPrep != "") {
+                outputPrep += " ";
             }
-            output_prep += micros + "us";
+            outputPrep += micros + "us";
         }
 
         if (nanos != 0) {
-            if (output_prep != "") {
-                output_prep += " ";
+            if (outputPrep != "") {
+                outputPrep += " ";
             }
-            output_prep += nanos + "ns";
+            outputPrep += nanos + "ns";
         }
 
-        return (sign == -1 ? "-" : "") + output_prep;
+        return (sign == -1 ? "-" : "") + outputPrep;
     }
 
     // from: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
@@ -255,13 +259,13 @@
         return output_html;
     }
 
-    function convert_json_obj_to_html(json_obj: any) {
-        let output_html = "";
+    function convertJsonObjToHtml(jsonObj: any) {
+        let outputHtml = "";
 
-        if (!json_obj) {
+        if (!jsonObj) {
             return "";
-        } else if (json_obj.String) {
-            let string = json_obj.String.val;
+        } else if (jsonObj.String) {
+            let string = jsonObj.String.val;
 
             string = string.replace(/</g, "&lt;");
             string = string.replace(/>/g, "&gt;");
@@ -270,28 +274,28 @@
             // return "<textarea>" + string + "</textarea>";
             return string;
         } else if (
-            json_obj.Int ||
-            json_obj.Float ||
-            json_obj.Bool ||
-            json_obj.Filesize ||
-            json_obj.Duration ||
-            json_obj.Date ||
-            json_obj.Binary ||
-            json_obj.Nothing ||
-            json_obj.Record ||
-            json_obj.List
+            jsonObj.Int ||
+            jsonObj.Float ||
+            jsonObj.Bool ||
+            jsonObj.Filesize ||
+            jsonObj.Duration ||
+            jsonObj.Date ||
+            jsonObj.Binary ||
+            jsonObj.Nothing ||
+            jsonObj.Record ||
+            jsonObj.List
         ) {
-            return convert_json_obj_to_html_inner(json_obj);
+            return convert_json_obj_to_html_inner(jsonObj);
         } else {
-            output_html = "$$$unknown$$$";
+            outputHtml = "$$$unknown$$$";
         }
-        return output_html;
+        return outputHtml;
     }
 
-    function convert_json_to_html(json_text: string) {
+    function convertJsonToHtml(json_text: string) {
         let json_obj = JSON.parse(json_text);
 
-        let output = convert_json_obj_to_html(json_obj);
+        let output = convertJsonObjToHtml(json_obj);
         let ansi = ansi_to_html(output);
         if (ansi == "$$$unknown$$$") {
             return json_text;
@@ -300,31 +304,13 @@
         }
     }
 
-    function runCommand(input: any) {
-        console.log(input);
-        let src = input.target.name;
-        invoke("simple_command_with_result", { argument: input.target.value })
-            .then((response: string) => {
-                let html_response = convert_json_to_html(response);
-                for (const pos in cards) {
-                    if ("input" + cards[pos].id === src) {
-                        cards[pos].input = input.target.value;
-                        cards[pos].output = `${html_response}`;
-                    }
-                }
-
-                addNewIOcard();
-            })
-            .catch((error) => {
-                for (const pos in cards) {
-                    if ("input" + cards[pos].id === src) {
-                        cards[pos].input = input.target.value;
-                        let ansi = ansi_to_html(error);
-
-                        cards[pos].output = `<pre>${ansi}</pre>`;
-                    }
-                }
-            });
+    function updateCard(cardName: string, input: string, output: string) {
+        for (const pos in cards) {
+            if ("input" + cards[pos].id === cardName) {
+                cards[pos].input = input;
+                cards[pos].output = output;
+            }
+        }
     }
 
     function addNewIOcard() {
@@ -335,9 +321,10 @@
         }
 
         if (last != "") {
-            card_id += 1;
-            cards.push({ id: card_id, input: "", output: "" });
+            cardId += 1;
+            cards.push({ id: cardId, input: "", output: "" });
             cards = cards;
+            historyPos = cards.length - 1;
         }
     }
 
@@ -374,28 +361,63 @@
         }
     }
 
-    function onArrows(ev: KeyboardEvent) {
-        console.log("onarrows");
+    function navigateInput(ev: any) {
+        if (ev.key == "ArrowUp") {
+            if (historyPos - 1 >= 0) {
+                if (cards[historyPos].id == cardId) {
+                    // Save what we were just typing so we can come back to it
+                    historyContent = ev.target.value;
+                }
+                historyPos -= 1;
+
+                let historyInput = cards[historyPos].input;
+
+                updateCard("input" + cardId, historyInput, "");
+            }
+        } else if (ev.key == "ArrowDown") {
+            if (historyPos + 1 < cards.length) {
+                historyPos += 1;
+
+                if (cards[historyPos].id == cardId) {
+                    // Use our cached input that the user already gave us
+
+                    updateCard("input" + cardId, historyContent, "");
+                } else {
+                    let historyInput = cards[historyPos].input;
+
+                    updateCard("input" + cardId, historyInput, "");
+                }
+            }
+        } else if (ev.key == "Enter") {
+            let src = ev.target.name;
+            invoke("simple_command_with_result", { argument: ev.target.value })
+                .then((response: string) => {
+                    let html_response = convertJsonToHtml(response);
+
+                    updateCard(src, ev.target.value, `${html_response}`);
+                    addNewIOcard();
+                })
+                .catch((error) => {
+                    for (const pos in cards) {
+                        if ("input" + cards[pos].id === src) {
+                            cards[pos].input = ev.target.value;
+                            let ansi = ansi_to_html(error);
+
+                            cards[pos].output = `<pre>${ansi}</pre>`;
+                        }
+                    }
+                });
+        }
+    }
+
+    function setFocus(ev: any) {
         console.log(ev);
-        let key = ev.key;
-        // let tmp: Nullable<HTMLElement>;
-        // let target = ev.target as HTMLElement;
-        if (key === "ArrowLeft") {
-            // LEFT ARROW
-            console.log("left arrow");
-            // ev.preventDefault();
-            // tmp = target.previousElementSibling as HTMLElement;
-            // if (tmp) tmp.click(),tmp.focus();
-        } else if (key === "ArrowUp") {
-            console.log("up arrow");
-        } else if (key === "ArrowRight") {
-            // RIGHT ARROW
-            console.log("right arrow");
-            // ev.preventDefault();
-            // tmp = target.nextElementSibling as HTMLElement;
-            // if (tmp) tmp.click(),tmp.focus();
-        } else if (key === "ArrowDown") {
-            console.log("down arrow");
+
+        for (const pos in cards) {
+            if ("input" + cards[pos].id === ev.target.name) {
+                cardId = cards[pos].id;
+                historyPos = parseInt(pos);
+            }
         }
     }
 </script>
@@ -403,14 +425,14 @@
 <main>
     <h1>{name}</h1>
     {#each cards as { id, input, output }}
-        <div class="card" on:keydown={onArrows}>
+        <div class="card" on:keydown={navigateInput}>
             {id}:&nbsp;
             <input
                 class="input"
                 name="input{id}"
                 value={input}
                 use:init
-                on:change={runCommand}
+                on:focus={setFocus}
             />
             <div class="closemarker" on:click={() => closeCard(id)}>x</div>
             <div class="output">
