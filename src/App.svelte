@@ -178,7 +178,7 @@
                 output_html += '<table class="styled-table"><tr>';
 
                 let arrLen = arr.length;
-                output_html += "<th></th>";
+                output_html += "<th><strong>hex</strong></th>";
                 for (let idx = 0; idx < 16; ++idx) {
                     output_html += "<th>" + idx.toString(16) + "</th>";
                 }
