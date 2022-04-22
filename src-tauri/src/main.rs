@@ -8,7 +8,7 @@ use parking_lot::Mutex;
 use nu_cli::{gather_parent_env_vars, CliError};
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
-    PipelineData, Span, Value, CONFIG_VARIABLE_ID,
+    PipelineData, Span, Value,
 };
 use tauri::{command, Menu, MenuItem, State, Submenu};
 
@@ -47,15 +47,7 @@ fn main() {
 
     gather_parent_env_vars(&mut engine_state);
 
-    let mut stack = Stack::new();
-    stack.vars.insert(
-        CONFIG_VARIABLE_ID,
-        Value::Record {
-            cols: vec![],
-            vals: vec![],
-            span: Span::new(0, 0),
-        },
-    );
+    let stack = Stack::new();
 
     tauri::Builder::default()
         .manage(MyState {

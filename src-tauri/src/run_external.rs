@@ -147,15 +147,11 @@ impl ExternalCommand {
             )),
             Ok(mut child) => {
                 if !input.is_nothing() {
-                    let engine_state = engine_state.clone();
+                    let mut engine_state = engine_state.clone();
                     let mut stack = stack.clone();
-                    stack.update_config(
-                        "use_ansi_coloring",
-                        Value::Bool {
-                            val: false,
-                            span: Span::new(0, 0),
-                        },
-                    );
+
+                    engine_state.config.use_ansi_coloring = false;
+
                     // if there is a string or a stream, that is sent to the pipe std
                     if let Some(mut stdin_write) = child.stdin.take() {
                         std::thread::spawn(move || {
@@ -346,14 +342,15 @@ impl ExternalCommand {
             process.current_dir(d);
             process
         } else {
-            return Err(ShellError::SpannedLabeledErrorHelp(
+            return Err(ShellError::GenericError(
                 "Current directory not found".to_string(),
                 "did not find PWD environment variable".to_string(),
-                span,
-                concat!(
+                Some(span),
+                Some(concat!(
                     "The environment variable 'PWD' was not found. ",
                     "It is required to define the current directory when running an external command."
-                ).to_string(),
+                ).to_string()),
+                vec![],
             ));
         };
 
