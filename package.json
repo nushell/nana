@@ -14,7 +14,7 @@
         "@rollup/plugin-commonjs": "^17.0.0",
         "@rollup/plugin-node-resolve": "^11.0.0",
         "@rollup/plugin-typescript": "^8.0.0",
-        "@tauri-apps/cli": "^1.0.0-rc.8",
+        "@tauri-apps/cli": "^1.0.0-rc.13",
         "@tsconfig/svelte": "^2.0.1",
         "rollup": "^2.3.4",
         "rollup-plugin-css-only": "^3.1.0",
@@ -28,7 +28,7 @@
         "typescript": "^4.6.3"
     },
     "dependencies": {
-        "@tauri-apps/api": "^1.0.0-rc.3",
+        "@tauri-apps/api": "^1.0.0-rc.6",
         "ansi_up": "^5.1.0",
         "has-ansi": "^5.0.1",
         "sirv-cli": "^2.0.0"
