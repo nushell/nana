@@ -425,22 +425,22 @@
 <main>
     <!-- <h1>{name}</h1> -->
     {#each cards as { id, input, output }}
-        <div class="card p-2 bg-blue-300 mb-2 rounded-sm" on:keydown={navigateInput}>
+        <div class="p-2 bg-solarized-base01 mb-2 rounded-sm" on:keydown={navigateInput}>
             <div id="header" class="flex">
-                <span class="self-center px-2 text-blue-800 font-bold text-lg rounded-sm bg-blue-200 ">{id}</span>
+                <span class="self-center px-2 text-solarized-base03 font-bold text-lg rounded-sm bg-solarized-blue">{id}</span>
                 <input
-                    class="input mx-1 pl-1 font-mono bg-blue-100 w-full rounded-sm"
+                    class="input ml-2 mr-1 pl-2 font-mono bg-solarized-base03 text-solarized-base3 w-full rounded-sm outline-none border-solarized-base02 focus:ring-2 focus:ring-solarized-blue"
                     name="input{id}"
                     value={input}
                     use:init
                     on:focus={setFocus}
                 />
 
-                <i class="fa-solid fa-xmark pl-1 cursor-pointer self-center text-xl text-blue-800" on:click={() => closeCard(id)}></i>
+                <i class="fa-solid fa-xmark pl-1 cursor-pointer self-center text-xl text-solarized-base03 hover:text-solarized-red" on:click={() => closeCard(id)}></i>
             </div>
             
             {#if output != ""}
-            <div class="output font-mono bg-blue-50 mt-2 p-1 rounded-sm ">
+            <div class="text-left  rounded-full font-mono bg-solarized-base02 mt-2 text-solarized-base3 text-sm">
                 {@html output}
             </div>
             {/if}
@@ -448,101 +448,3 @@
         </div>
     {/each}
 </main>
-
-<style>
-    main {
-        text-align: center;
-        padding: 1em;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    h1 {
-        color: #ff3e00;
-        text-transform: uppercase;
-        font-size: 4em;
-        font-weight: 100;
-    }
-
-    /* :global(textarea) {
-        min-width: 400px;
-        min-height: 50px;
-        font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-    } */
-
-    /* .input {
-        justify-content: center;
-        min-width: 600px;
-        align-content: center;
-    } */
-
-    .output {
-        display: flex;
-        justify-content: left;
-        text-align: left;
-        /* padding: 1em; */
-        /* background-color: white; */
-    }
-
-    .card {
-        /* background-color: aliceblue; */
-        /* padding: 1em; */
-        /* margin: 25px 0; */
-        position: relative;
-    }
-
-    .closemarker {
-        /* position: absolute; */
-        /* top: 10px; */
-        /* right: 10px; */
-        /* cursor: pointer; */
-    }
-
-    :global(.string-content) {
-        align-content: center;
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 100%;
-        max-width: 100%;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
-
-    :global(.styled-table) {
-        align-content: center;
-        border-collapse: collapse;
-        /* margin: 100px 10px 0 0; */
-        /* margin: 25px 0; */
-        font-size: 0.9em;
-        /* font-family: monospace; */
-        min-width: 100%;
-        max-width: 100%;
-        /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
-    }
-
-    :global(.styled-table thead tr) {
-        background-color: #009879;
-        color: #ffffff;
-        text-align: left;
-    }
-    :global(.styled-table th),
-    :global(.styled-table td) {
-        /* padding: 12px 15px; */
-    }
-
-    :global(.styled-table tbody tr) {
-        border-bottom: 1px solid #dddddd;
-    }
-
-    :global(.styled-table tbody tr:nth-of-type(even)) {
-        background-color: #ffffff;
-    }
-
-    @media (min-width: 640px) {
-        main {
-            max-width: none;
-        }
-    }
-</style>

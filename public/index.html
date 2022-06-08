@@ -43,12 +43,28 @@
 			}
 		}
 	</script>
+	<style type="text/tailwindcss">
+		@layer utilities {
+			.styled-table {
+				@apply min-w-full max-w-full rounded;
+			}
+
+			.styled-table tbody tr {
+				@apply even:bg-solarized-base02 odd:bg-solarized-base03;
+			}
+
+			.styled-table th,
+			.styled-table td{
+				@apply pl-1 border-b border-r border-solarized-base01;
+			}
+		}
+	</style>
 
 	<script src="https://kit.fontawesome.com/b8d88430fb.js" crossorigin="anonymous"></script>
 	<script defer src='/build/bundle.js'></script>
 </head>
 
-<body class="bg-blue-100"">
+<body class="bg-solarized-base03">
 </body>
 
 </html>
