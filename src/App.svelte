@@ -12,7 +12,7 @@
     let historyPos = 0;
     let historyContent = "";
 
-    let cards = [{ id: 1, input: "", output: "" }];
+    let cards = [{ id: 1, input: "ls", output: "" }];
 
     function get_fields(record: any) {
         let fields = [];
@@ -423,21 +423,28 @@
 </script>
 
 <main>
-    <h1>{name}</h1>
+    <!-- <h1>{name}</h1> -->
     {#each cards as { id, input, output }}
-        <div class="card" on:keydown={navigateInput}>
-            {id}:&nbsp;
-            <input
-                class="input"
-                name="input{id}"
-                value={input}
-                use:init
-                on:focus={setFocus}
-            />
-            <div class="closemarker" on:click={() => closeCard(id)}>x</div>
-            <div class="output">
+        <div class="card p-2 bg-blue-300 mb-2 rounded-sm" on:keydown={navigateInput}>
+            <div id="header" class="flex">
+                <span class="self-center px-2 text-blue-800 font-bold text-lg rounded-sm bg-blue-200 ">{id}</span>
+                <input
+                    class="input mx-1 pl-1 font-mono bg-blue-100 w-full rounded-sm"
+                    name="input{id}"
+                    value={input}
+                    use:init
+                    on:focus={setFocus}
+                />
+
+                <i class="fa-solid fa-xmark pl-1 cursor-pointer self-center text-xl text-blue-800" on:click={() => closeCard(id)}></i>
+            </div>
+            
+            {#if output != ""}
+            <div class="output font-mono bg-blue-50 mt-2 p-1 rounded-sm ">
                 {@html output}
             </div>
+            {/if}
+            
         </div>
     {/each}
 </main>
@@ -457,39 +464,39 @@
         font-weight: 100;
     }
 
-    :global(textarea) {
+    /* :global(textarea) {
         min-width: 400px;
         min-height: 50px;
         font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
             DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-    }
+    } */
 
-    .input {
+    /* .input {
         justify-content: center;
         min-width: 600px;
         align-content: center;
-    }
+    } */
 
     .output {
         display: flex;
         justify-content: left;
         text-align: left;
-        padding: 1em;
-        background-color: white;
+        /* padding: 1em; */
+        /* background-color: white; */
     }
 
     .card {
-        background-color: aliceblue;
-        padding: 1em;
-        margin: 25px 0;
+        /* background-color: aliceblue; */
+        /* padding: 1em; */
+        /* margin: 25px 0; */
         position: relative;
     }
 
     .closemarker {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
+        /* position: absolute; */
+        /* top: 10px; */
+        /* right: 10px; */
+        /* cursor: pointer; */
     }
 
     :global(.string-content) {
@@ -506,12 +513,13 @@
     :global(.styled-table) {
         align-content: center;
         border-collapse: collapse;
-        margin: 25px 0;
+        /* margin: 100px 10px 0 0; */
+        /* margin: 25px 0; */
         font-size: 0.9em;
-        font-family: sans-serif;
+        /* font-family: monospace; */
         min-width: 100%;
         max-width: 100%;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
     }
 
     :global(.styled-table thead tr) {
@@ -521,7 +529,7 @@
     }
     :global(.styled-table th),
     :global(.styled-table td) {
-        padding: 12px 15px;
+        /* padding: 12px 15px; */
     }
 
     :global(.styled-table tbody tr) {
@@ -529,7 +537,7 @@
     }
 
     :global(.styled-table tbody tr:nth-of-type(even)) {
-        background-color: #f3f3f3;
+        background-color: #ffffff;
     }
 
     @media (min-width: 640px) {
