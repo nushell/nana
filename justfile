@@ -5,3 +5,6 @@ watch:
 
 build:
     npm run tauri build
+
+prettier:
+    npx prettier --write .

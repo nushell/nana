@@ -3,9 +3,6 @@
     import { default as AnsiUp } from "ansi_up";
     import hasAnsi from "has-ansi";
     import Tailwindcss from "./Tailwindcss.svelte";
-    import { text } from "svelte/internal";
-
-    export let name;
 
     let cardId = 1;
 
@@ -423,33 +420,44 @@
     }
 </script>
 
-<Tailwindcss/>
+<Tailwindcss />
 
 <main>
     <!-- <h1>{name}</h1> -->
     {#each cards as { id, input, output }}
-        <div class="p-2 bg-solarized-base2 dark:bg-solarized-base01 mb-2 rounded-sm" on:keydown={navigateInput}>
+        <div
+            class="mb-2 rounded-sm bg-solarized-base2 p-2 dark:bg-solarized-base01 "
+            on:keydown={navigateInput}
+        >
             <div id="header" class="flex">
-                <span class="self-center px-2 text-solarized-base3 dark:text-solarized-base03 font-bold text-lg rounded-sm bg-solarized-blue">{id}</span>
+                <span
+                    class="self-center rounded-sm bg-solarized-blue px-2 text-lg 
+                    font-bold text-solarized-base3 dark:text-solarized-base03"
+                    >{id}</span
+                >
                 <input
-                    class="input ml-2 mr-1 pl-2 font-mono bg-solarized-base3 dark:bg-solarized-base03
-                    text-solarized-base03 dark:text-solarized-base3 w-full rounded-sm outline-none 
-                    dark:border-solarized-base02 focus:ring-2 focus:ring-solarized-blue"
+                    class="input ml-2 mr-1 w-full rounded-sm bg-solarized-base3 pl-2
+                    font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-blue 
+                    dark:border-solarized-base02 dark:bg-solarized-base03 dark:text-solarized-base3"
                     name="input{id}"
                     value={input}
                     use:init
                     on:focus={setFocus}
                 />
 
-                <i class="fa-solid fa-xmark pl-1 cursor-pointer self-center text-xl text-solarized-base03 hover:text-solarized-red" on:click={() => closeCard(id)}></i>
+                <i
+                    class="fa-solid fa-xmark cursor-pointer self-center pl-1 text-xl text-solarized-base03 hover:text-solarized-red"
+                    on:click={() => closeCard(id)}
+                />
             </div>
-            
+
             {#if output != ""}
-            <div class="text-left font-mono bg-solarized-base02 mt-2 text-solarized-base3 text-sm">
-                {@html output}
-            </div>
+                <div
+                    class="mt-2 bg-solarized-base02 text-left font-mono text-sm text-solarized-base3"
+                >
+                    {@html output}
+                </div>
             {/if}
-            
         </div>
     {/each}
 </main>
