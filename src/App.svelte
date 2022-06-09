@@ -453,7 +453,7 @@
 
             {#if output != ""}
                 <div
-                    class="border border-solarized-base1 dark:border-solarized-base0 rounded-sm mt-2 dark:bg-solarized-base02 text-left font-mono text-sm text-solarized-base3"
+                    class="mt-2 rounded-sm border border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02"
                 >
                     {@html output}
                 </div>

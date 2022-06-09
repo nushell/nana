@@ -6,7 +6,7 @@ Experimental GUI version of Nushell
 
 -   `npm install`
 -   `npm run tauri dev` (or to build a release: `npm run tauri build`)
-    - If you use [`just`](https://github.com/casey/just), `just watch` and `just build`
+    -   If you use [`just`](https://github.com/casey/just), `just watch` and `just build`
 
 ## Dependencies
 
