@@ -2,9 +2,7 @@
     import { invoke } from "@tauri-apps/api/tauri";
     import { default as AnsiUp } from "ansi_up";
     import hasAnsi from "has-ansi";
-    import { text } from "svelte/internal";
-
-    export let name;
+    import Tailwindcss from "./Tailwindcss.svelte";
 
     let cardId = 1;
 
@@ -422,119 +420,44 @@
     }
 </script>
 
+<Tailwindcss />
+
 <main>
-    <h1>{name}</h1>
+    <!-- <h1>{name}</h1> -->
     {#each cards as { id, input, output }}
-        <div class="card" on:keydown={navigateInput}>
-            {id}:&nbsp;
-            <input
-                class="input"
-                name="input{id}"
-                value={input}
-                use:init
-                on:focus={setFocus}
-            />
-            <div class="closemarker" on:click={() => closeCard(id)}>x</div>
-            <div class="output">
-                {@html output}
+        <div
+            class="mb-2 rounded-sm bg-solarized-blue p-2 dark:bg-solarized-base01 "
+            on:keydown={navigateInput}
+        >
+            <div id="header" class="flex">
+                <span
+                    class="self-center rounded-sm bg-solarized-base2 px-2 text-lg font-bold 
+                    text-solarized-cyan dark:bg-solarized-blue dark:text-solarized-base03"
+                    >{id}</span
+                >
+                <input
+                    class="input ml-2 mr-1 w-full rounded-sm bg-solarized-base3 pl-2
+                    font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 
+                    dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
+                    name="input{id}"
+                    value={input}
+                    use:init
+                    on:focus={setFocus}
+                />
+
+                <i
+                    class="fa-solid fa-xmark cursor-pointer self-center pl-1 text-xl text-solarized-base3 hover:text-solarized-red dark:text-solarized-base03"
+                    on:click={() => closeCard(id)}
+                />
             </div>
+
+            {#if output != ""}
+                <div
+                    class="mt-2 rounded-sm border border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02"
+                >
+                    {@html output}
+                </div>
+            {/if}
         </div>
     {/each}
 </main>
-
-<style>
-    main {
-        text-align: center;
-        padding: 1em;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    h1 {
-        color: #ff3e00;
-        text-transform: uppercase;
-        font-size: 4em;
-        font-weight: 100;
-    }
-
-    :global(textarea) {
-        min-width: 400px;
-        min-height: 50px;
-        font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-    }
-
-    .input {
-        justify-content: center;
-        min-width: 600px;
-        align-content: center;
-    }
-
-    .output {
-        display: flex;
-        justify-content: left;
-        text-align: left;
-        padding: 1em;
-        background-color: white;
-    }
-
-    .card {
-        background-color: aliceblue;
-        padding: 1em;
-        margin: 25px 0;
-        position: relative;
-    }
-
-    .closemarker {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
-    }
-
-    :global(.string-content) {
-        align-content: center;
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 100%;
-        max-width: 100%;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
-
-    :global(.styled-table) {
-        align-content: center;
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 100%;
-        max-width: 100%;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
-
-    :global(.styled-table thead tr) {
-        background-color: #009879;
-        color: #ffffff;
-        text-align: left;
-    }
-    :global(.styled-table th),
-    :global(.styled-table td) {
-        padding: 12px 15px;
-    }
-
-    :global(.styled-table tbody tr) {
-        border-bottom: 1px solid #dddddd;
-    }
-
-    :global(.styled-table tbody tr:nth-of-type(even)) {
-        background-color: #f3f3f3;
-    }
-
-    @media (min-width: 640px) {
-        main {
-            max-width: none;
-        }
-    }
-</style>

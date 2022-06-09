@@ -1,0 +1,16 @@
+# built with npm install
+node_modules/
+
+# built each time
+public/build/
+
+# npm's package lock
+package-lock.json
+
+# rust's target folders
+target/
+src-tauri/WixTools/
+src-tauri/target/
+
+# mac's infamous .ds_store file
+.DS_Store
