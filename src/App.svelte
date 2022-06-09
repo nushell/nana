@@ -2,6 +2,7 @@
     import { invoke } from "@tauri-apps/api/tauri";
     import { default as AnsiUp } from "ansi_up";
     import hasAnsi from "has-ansi";
+    import Tailwindcss from "./Tailwindcss.svelte";
     import { text } from "svelte/internal";
 
     export let name;
@@ -421,6 +422,8 @@
         }
     }
 </script>
+
+<Tailwindcss/>
 
 <main>
     <!-- <h1>{name}</h1> -->
