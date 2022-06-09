@@ -426,19 +426,19 @@
     <!-- <h1>{name}</h1> -->
     {#each cards as { id, input, output }}
         <div
-            class="mb-2 rounded-sm bg-solarized-base3 p-2 dark:bg-solarized-base01 "
+            class="mb-2 rounded-sm bg-solarized-blue p-2 dark:bg-solarized-base01 "
             on:keydown={navigateInput}
         >
             <div id="header" class="flex">
                 <span
-                    class="self-center rounded-sm bg-solarized-blue px-2 text-lg 
-                    font-bold text-solarized-base3 dark:text-solarized-base03"
+                    class="self-center rounded-sm bg-solarized-base2 px-2 text-lg font-bold 
+                    text-solarized-cyan dark:bg-solarized-blue dark:text-solarized-base03"
                     >{id}</span
                 >
                 <input
-                    class="input ml-2 mr-1 w-full rounded-sm bg-white pl-2
-                    font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-blue 
-                    dark:border-solarized-base02 dark:bg-solarized-base03 dark:text-solarized-base3"
+                    class="input ml-2 mr-1 w-full rounded-sm bg-solarized-base3 pl-2
+                    font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 
+                    dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
                     name="input{id}"
                     value={input}
                     use:init
@@ -446,7 +446,7 @@
                 />
 
                 <i
-                    class="fa-solid fa-xmark cursor-pointer self-center pl-1 text-xl text-solarized-base03 hover:text-solarized-red"
+                    class="fa-solid fa-xmark cursor-pointer self-center pl-1 text-xl text-solarized-base3 hover:text-solarized-red dark:text-solarized-base03"
                     on:click={() => closeCard(id)}
                 />
             </div>

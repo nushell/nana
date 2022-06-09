@@ -4,7 +4,7 @@
     @tailwind utilities;
 
     @layer utilities {
-        .styled-table {
+        table.styled-table {
             @apply min-w-full max-w-full;
         }
 
@@ -17,7 +17,7 @@
 
         .styled-table th,
         .styled-table td {
-            @apply border-r border-solarized-base1 pl-1 last:border-r-0 dark:border-solarized-base01;
+            @apply border-collapse border-r border-solarized-base1 pl-1 last:border-r-0 dark:border-solarized-base01;
         }
     }
 </style>
