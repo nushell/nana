@@ -10,7 +10,7 @@
     let historyPos = 0;
     let historyContent = "";
 
-    let cards = [{ id: 1, input: "ls", output: "" }];
+    let cards = [{ id: 1, input: "", output: "" }];
 
     function get_fields(record: any) {
         let fields = [];
