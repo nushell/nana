@@ -426,7 +426,7 @@
     <!-- <h1>{name}</h1> -->
     {#each cards as { id, input, output }}
         <div
-            class="mb-2 rounded-sm bg-solarized-base2 p-2 dark:bg-solarized-base01 "
+            class="mb-2 rounded-sm bg-solarized-base3 p-2 dark:bg-solarized-base01 "
             on:keydown={navigateInput}
         >
             <div id="header" class="flex">
@@ -436,7 +436,7 @@
                     >{id}</span
                 >
                 <input
-                    class="input ml-2 mr-1 w-full rounded-sm bg-solarized-base3 pl-2
+                    class="input ml-2 mr-1 w-full rounded-sm bg-white pl-2
                     font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-blue 
                     dark:border-solarized-base02 dark:bg-solarized-base03 dark:text-solarized-base3"
                     name="input{id}"
@@ -453,7 +453,7 @@
 
             {#if output != ""}
                 <div
-                    class="mt-2 bg-solarized-base02 text-left font-mono text-sm text-solarized-base3"
+                    class="border border-solarized-base1 dark:border-solarized-base0 rounded-sm mt-2 dark:bg-solarized-base02 text-left font-mono text-sm text-solarized-base3"
                 >
                     {@html output}
                 </div>
