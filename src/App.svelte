@@ -10,7 +10,18 @@
     let historyPos = 0;
     let historyContent = "";
 
-    let cards = [{ id: 1, input: "", output: "" }];
+    type Card = {
+        id: number;
+        cwd: string;
+        input: string;
+        output: string;
+    };
+
+    let cards: Array<Card> = [];
+    createCard().then((card) => {
+        cards.push(card);
+        cards = cards; // seems like this is necessary to trigger a re-render. TODO: find out why
+    });
 
     function get_fields(record: any) {
         let fields = [];
@@ -311,7 +322,7 @@
         }
     }
 
-    function addNewIOcard() {
+    async function addNewIOcard() {
         let last = "nothing";
         cards.lastIndexOf;
         for (const card in cards) {
@@ -320,10 +331,23 @@
 
         if (last != "") {
             cardId += 1;
-            cards.push({ id: cardId, input: "", output: "" });
+
+            let card = await createCard();
+            cards.push(card);
             cards = cards;
             historyPos = cards.length - 1;
         }
+    }
+
+    async function createCard(): Promise<Card> {
+        cardId += 1;
+        let cwd = await invoke("get_working_directory");
+        return {
+            id: cardId,
+            cwd: cwd as string,
+            input: "",
+            output: "",
+        };
     }
 
     function closeCard(id: number) {
@@ -359,7 +383,7 @@
         }
     }
 
-    function navigateInput(ev: any) {
+    async function navigateInput(ev: any) {
         if (ev.key == "ArrowUp") {
             if (historyPos - 1 >= 0) {
                 if (cards[historyPos].id == cardId) {
@@ -388,23 +412,27 @@
             }
         } else if (ev.key == "Enter") {
             let src = ev.target.name;
-            invoke("simple_command_with_result", { argument: ev.target.value })
-                .then((response: string) => {
-                    let html_response = convertJsonToHtml(response);
-
-                    updateCard(src, ev.target.value, `${html_response}`);
-                    addNewIOcard();
-                })
-                .catch((error) => {
-                    for (const pos in cards) {
-                        if ("input" + cards[pos].id === src) {
-                            cards[pos].input = ev.target.value;
-                            let ansi = ansi_to_html(error);
-
-                            cards[pos].output = `<pre>${ansi}</pre>`;
-                        }
+            try {
+                let response: string = await invoke(
+                    "simple_command_with_result",
+                    {
+                        argument: ev.target.value,
                     }
-                });
+                );
+                let html_response = convertJsonToHtml(response);
+                updateCard(src, ev.target.value, `${html_response}`);
+
+                await addNewIOcard();
+            } catch (error) {
+                for (const pos in cards) {
+                    if ("input" + cards[pos].id === src) {
+                        cards[pos].input = ev.target.value;
+                        let ansi = ansi_to_html(error);
+
+                        cards[pos].output = `<pre>${ansi}</pre>`;
+                    }
+                }
+            }
         }
     }
 
@@ -423,41 +451,44 @@
 <Tailwindcss />
 
 <main>
-    <!-- <h1>{name}</h1> -->
-    {#each cards as { id, input, output }}
-        <div
-            class="mb-2 rounded-sm bg-solarized-blue p-2 dark:bg-solarized-base01 "
-            on:keydown={navigateInput}
-        >
-            <div id="header" class="flex">
-                <span
-                    class="self-center rounded-sm bg-solarized-base2 px-2 text-lg font-bold 
-                    text-solarized-cyan dark:bg-solarized-blue dark:text-solarized-base03"
-                    >{id}</span
-                >
-                <input
-                    class="input ml-2 mr-1 w-full rounded-sm bg-solarized-base3 pl-2
-                    font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 
-                    dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
-                    name="input{id}"
-                    value={input}
-                    use:init
-                    on:focus={setFocus}
-                />
-
-                <i
-                    class="fa-solid fa-xmark cursor-pointer self-center pl-1 text-xl text-solarized-base3 hover:text-solarized-red dark:text-solarized-base03"
-                    on:click={() => closeCard(id)}
-                />
+    {#each cards as { id, cwd, input, output }}
+        <div class="mb-2   flex flex-col " on:keydown={navigateInput}>
+            <div
+                class="mr-4 w-fit translate-y-1 self-end rounded-t bg-solarized-blue px-2 font-mono text-sm text-solarized-base2 dark:bg-solarized-base01"
+            >
+                <span class="">{cwd}</span>
+                <span>
+                    <i
+                        class="fa-solid fa-xmark inline cursor-pointer text-sm text-solarized-base3 hover:text-solarized-red dark:text-solarized-base03"
+                        on:click={() => closeCard(id)}
+                    />
+                </span>
             </div>
 
-            {#if output != ""}
-                <div
-                    class="mt-2 rounded-sm border border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02"
-                >
-                    {@html output}
+            <div
+                id="card-body"
+                class="rounded bg-solarized-blue px-2 pb-2 pt-2 dark:bg-solarized-base01"
+            >
+                <div id="header" class="flex">
+                    <input
+                        class="input  w-full rounded-sm bg-solarized-base3 pl-2
+                        font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 
+                        dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
+                        name="input{id}"
+                        value={input}
+                        use:init
+                        on:focus={setFocus}
+                    />
                 </div>
-            {/if}
+
+                {#if output != ""}
+                    <div
+                        class="mt-2 rounded-sm  border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02"
+                    >
+                        {@html output}
+                    </div>
+                {/if}
+            </div>
         </div>
     {/each}
 </main>

@@ -118,3 +118,15 @@ fn simple_command_with_result(argument: String, state: State<MyState>) -> Result
         }
     }
 }
+
+#[command]
+fn get_working_directory(state: State<MyState>) -> Result<String, String> {
+    let engine_state = state.engine_state.lock();
+    let stack = state.stack.lock();
+    let cwd = nu_engine::env::current_dir_str(&engine_state, &stack);
+
+    match cwd {
+        Ok(s) => Ok(s),
+        Err(e) => Ok(format!("\"{}\"", e)),
+    }
+}
