@@ -5,10 +5,10 @@
 
 use parking_lot::Mutex;
 
-use nu_cli::{gather_parent_env_vars, CliError};
+use nu_cli::gather_parent_env_vars;
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
-    PipelineData, Span, Value,
+    CliError, PipelineData, Span, Value,
 };
 use tauri::{command, Menu, MenuItem, State, Submenu};
 
