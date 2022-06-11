@@ -471,6 +471,7 @@
             >
                 <div id="header" class="flex">
                     <input
+                        autocapitalize="none"                          
                         class="input  w-full rounded-sm bg-solarized-base3 pl-2
                         font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 
                         dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
