@@ -2459,6 +2459,7 @@ dependencies = [
  "strip-ansi-escapes",
  "tauri",
  "tauri-build",
+ "windows 0.37.0",
 ]
 
 [[package]]
