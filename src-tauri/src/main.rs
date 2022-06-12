@@ -3,18 +3,28 @@
     windows_subsystem = "windows"
 )]
 
+use std::sync::Arc;
+
 use parking_lot::Mutex;
 
-use nu_cli::gather_parent_env_vars;
+use nu_cli::{gather_parent_env_vars, NuCompleter};
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
     CliError, PipelineData, Span, Value,
 };
-use tauri::{command, Manager, State};
+use reedline::Completer;
+use serde::{Deserialize, Serialize};
+use tauri::{command, Manager, Menu, MenuItem, State, Submenu};
 
 pub struct MyState {
     engine_state: Mutex<EngineState>,
     stack: Mutex<Stack>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CompletionRecord {
+    completion: String,
+    start: usize,
 }
 
 mod nushell;
@@ -46,43 +56,68 @@ fn main() {
 
     let stack = Stack::new();
 
-    tauri::Builder::default()
-        .manage(MyState {
-            engine_state: Mutex::new(engine_state),
-            stack: Mutex::new(stack),
-        })
-        .invoke_handler(tauri::generate_handler![
-            simple_command_with_result,
-            get_working_directory
-        ])
-        // Disabling the menu to make the UI cleaner; can always re-enable it if we think of useful menu items to add
-        // .menu(
-        //     Menu::new()
-        //         .add_submenu(Submenu::new(
-        //             "Nushell",
-        //             Menu::new()
-        //                 .add_native_item(MenuItem::EnterFullScreen)
-        //                 .add_native_item(MenuItem::Quit),
-        //         ))
-        //         .add_submenu(Submenu::new(
-        //             "Edit",
-        //             Menu::new()
-        //                 .add_native_item(MenuItem::Copy)
-        //                 .add_native_item(MenuItem::Paste)
-        //                 .add_native_item(MenuItem::Cut)
-        //                 .add_native_item(MenuItem::Undo)
-        //                 .add_native_item(MenuItem::Redo)
-        //                 .add_native_item(MenuItem::SelectAll),
-        //         )),
-        // )
-        .setup(|app| {
-            if let Some(main_window) = app.get_window("main") {
-                try_set_titlebar_colors(&main_window);
-            }
-            Ok(())
-        })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+    #[cfg(target_os = "macos")]
+    {
+        tauri::Builder::default()
+            .manage(MyState {
+                engine_state: Mutex::new(engine_state),
+                stack: Mutex::new(stack),
+            })
+            .invoke_handler(tauri::generate_handler![
+                simple_command_with_result,
+                get_working_directory,
+                complete,
+            ])
+            // Menus are required to make the keyboard shortcuts work
+            .menu(
+                Menu::new()
+                    .add_submenu(Submenu::new(
+                        "Nushell",
+                        Menu::new()
+                            .add_native_item(MenuItem::EnterFullScreen)
+                            .add_native_item(MenuItem::Quit),
+                    ))
+                    .add_submenu(Submenu::new(
+                        "Edit",
+                        Menu::new()
+                            .add_native_item(MenuItem::Copy)
+                            .add_native_item(MenuItem::Paste)
+                            .add_native_item(MenuItem::Cut)
+                            .add_native_item(MenuItem::Undo)
+                            .add_native_item(MenuItem::Redo)
+                            .add_native_item(MenuItem::SelectAll),
+                    )),
+            )
+            .setup(|app| {
+                if let Some(main_window) = app.get_window("main") {
+                    try_set_titlebar_colors(&main_window);
+                }
+                Ok(())
+            })
+            .run(tauri::generate_context!())
+            .expect("error while running tauri application");
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        tauri::Builder::default()
+            .manage(MyState {
+                engine_state: Mutex::new(engine_state),
+                stack: Mutex::new(stack),
+            })
+            .invoke_handler(tauri::generate_handler![
+                simple_command_with_result,
+                get_working_directory,
+                complete
+            ])
+            .setup(|app| {
+                if let Some(main_window) = app.get_window("main") {
+                    try_set_titlebar_colors(&main_window);
+                }
+                Ok(())
+            })
+            .run(tauri::generate_context!())
+            .expect("error while running tauri application");
+    }
 }
 
 // Set the colors of the titlebar to match the current light/dark theme
@@ -167,4 +202,29 @@ fn get_working_directory(state: State<MyState>) -> Result<String, String> {
         Ok(s) => Ok(s),
         Err(e) => Ok(format!("\"{}\"", e)),
     }
+}
+
+#[command]
+fn complete(
+    argument: String,
+    position: i64,
+    state: State<MyState>,
+) -> Result<Vec<CompletionRecord>, String> {
+    let engine_state = state.engine_state.lock();
+    let stack = state.stack.lock();
+
+    let engine_state = Arc::new(engine_state.clone());
+    let stack = stack.clone();
+
+    let mut completer = NuCompleter::new(engine_state, stack);
+
+    let result = completer.complete(&argument, position as usize);
+
+    Ok(result
+        .into_iter()
+        .map(|x| CompletionRecord {
+            completion: x.value,
+            start: x.span.start,
+        })
+        .collect())
 }

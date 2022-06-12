@@ -433,18 +433,54 @@
                     }
                 }
             }
+        } else if (ev.key == "Tab") {
+            ev.preventDefault();
+            let src = ev.target.name;
+            console.log(ev);
+            try {
+                let completions: Array<{ completion: String; start: number }> =
+                    await invoke("complete", {
+                        argument: ev.target.value,
+                        position: ev.target.selectionEnd,
+                    });
+
+                console.log(
+                    "completing: " +
+                        ev.target.value +
+                        " at " +
+                        ev.target.selectionEnd
+                );
+                console.log("completions: ");
+                console.log(completions);
+                if (completions.length > 0) {
+                    let before = ev.target.value.slice(0, completions[0].start);
+                    let comp = completions[0].completion;
+                    let after = ev.target.value.slice(
+                        completions[0].start +
+                            ev.target.selectionStart -
+                            completions[0].start
+                    );
+
+                    let newInput = before + comp + after;
+                    updateCard("input" + cardId, newInput, "");
+                }
+            } catch (error) {}
+        }
+    }
+
+    function setFocusByName(name: String) {
+        for (const pos in cards) {
+            if ("input" + cards[pos].id === name) {
+                cardId = cards[pos].id;
+                historyPos = parseInt(pos);
+            }
         }
     }
 
     function setFocus(ev: any) {
         console.log(ev);
 
-        for (const pos in cards) {
-            if ("input" + cards[pos].id === ev.target.name) {
-                cardId = cards[pos].id;
-                historyPos = parseInt(pos);
-            }
-        }
+        setFocusByName(ev.target.name);
     }
 </script>
 
@@ -471,7 +507,7 @@
             >
                 <div id="header" class="flex">
                     <input
-                        autocapitalize="none"                          
+                        autocapitalize="none"
                         class="input  w-full rounded-sm bg-solarized-base3 pl-2
                         font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 
                         dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"

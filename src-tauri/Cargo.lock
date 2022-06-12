@@ -2453,6 +2453,7 @@ dependencies = [
  "nu-protocol",
  "parking_lot 0.12.1",
  "pathdiff",
+ "reedline",
  "regex",
  "serde",
  "serde_json",
