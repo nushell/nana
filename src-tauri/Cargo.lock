@@ -211,15 +211,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
 
 [[package]]
-name = "bincode"
-version = "1.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1436,13 +1427,13 @@ dependencies = [
 
 [[package]]
 name = "getrandom"
-version = "0.2.6"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9be70c98951c83b8d2f8f60d7065fa6d5146873094452a1008da8c2f1e4205ad"
+checksum = "4eb1a864a501629691edf6c15a593b7a51eebaa1e8468e9ddc623de7c9b58ec6"
 dependencies = [
  "cfg-if 1.0.0",
  "libc",
- "wasi 0.10.0+wasi-snapshot-preview1",
+ "wasi 0.11.0+wasi-snapshot-preview1",
 ]
 
 [[package]]
@@ -1557,9 +1548,9 @@ checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
 
 [[package]]
 name = "globset"
-version = "0.4.8"
+version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10463d9ff00a2a068db14231982f5132edebad0d7660cd956a1c30292dbcbfbd"
+checksum = "0a1e17342619edbc21a964c2afbeb6c820c6a2560032872f397bb97ea127bd0a"
 dependencies = [
  "aho-corasick",
  "bstr",
@@ -2083,9 +2074,9 @@ checksum = "72167d68f5fce3b8655487b8038691a3c9984ee769590f93f2a631f4ad64e4f5"
 
 [[package]]
 name = "js-sys"
-version = "0.3.57"
+version = "0.3.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "671a26f820db17c2a2750743f1dd03bafd15b98c9f30c7c2628c024c05d73397"
+checksum = "c3fac17f7123a73ca62df411b1bf727ccc805daa070338fda671c86dac1bdc27"
 dependencies = [
  "wasm-bindgen",
 ]
@@ -2237,9 +2228,9 @@ checksum = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
 
 [[package]]
 name = "mac-notification-sys"
-version = "0.5.0"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "297c13fc8ff9fa8b2d0e53850f80e0aa962628e865d447031ce58cdb062e5b29"
+checksum = "042f74a606175d72ca483e14e0873fe0f6c003f7af45865b17b16fdaface7203"
 dependencies = [
  "cc",
  "dirs-next",
@@ -2632,7 +2623,7 @@ dependencies = [
 [[package]]
 name = "nu-cli"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "crossterm",
  "fuzzy-matcher",
@@ -2653,7 +2644,7 @@ dependencies = [
 [[package]]
 name = "nu-color-config"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "nu-ansi-term",
  "nu-json",
@@ -2665,7 +2656,7 @@ dependencies = [
 [[package]]
 name = "nu-command"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "Inflector",
  "alphanumeric-sort",
@@ -2745,7 +2736,7 @@ dependencies = [
 [[package]]
 name = "nu-engine"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "chrono",
  "nu-glob",
@@ -2758,12 +2749,12 @@ dependencies = [
 [[package]]
 name = "nu-glob"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 
 [[package]]
 name = "nu-json"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "lazy_static",
  "linked-hash-map",
@@ -2775,7 +2766,7 @@ dependencies = [
 [[package]]
 name = "nu-parser"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "chrono",
  "log",
@@ -2789,7 +2780,7 @@ dependencies = [
 [[package]]
 name = "nu-path"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "dirs-next",
  "dunce",
@@ -2799,7 +2790,7 @@ dependencies = [
 [[package]]
 name = "nu-pretty-hex"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "nu-ansi-term",
  "rand 0.8.5",
@@ -2808,7 +2799,7 @@ dependencies = [
 [[package]]
 name = "nu-protocol"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "byte-unit",
  "chrono",
@@ -2829,7 +2820,7 @@ dependencies = [
 [[package]]
 name = "nu-system"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "chrono",
  "errno",
@@ -2844,7 +2835,7 @@ dependencies = [
 [[package]]
 name = "nu-table"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "ansi-str",
  "atty",
@@ -2858,7 +2849,7 @@ dependencies = [
 [[package]]
 name = "nu-term-grid"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "strip-ansi-escapes",
  "unicode-width",
@@ -2867,7 +2858,7 @@ dependencies = [
 [[package]]
 name = "nu-test-support"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "getset",
  "hamcrest2",
@@ -2880,7 +2871,7 @@ dependencies = [
 [[package]]
 name = "nu-utils"
 version = "0.63.1"
-source = "git+https://github.com/nushell/nushell?branch=main#9d100070859b31aaa2cc362f1d01b28860034505"
+source = "git+https://github.com/nushell/nushell?branch=main#ff946a2f217701f3827996c07453bc047a19f2d3"
 dependencies = [
  "crossterm_winapi",
 ]
@@ -3086,9 +3077,9 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
 name = "open"
-version = "2.1.3"
+version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2423ffbf445b82e58c3b1543655968923dd06f85432f10be2bb4f1b7122f98c"
+checksum = "360bcc8316bf6363aa3954c3ccc4de8add167b087e0259190a043c9514f910fe"
 dependencies = [
  "pathdiff",
  "windows-sys 0.36.1",
@@ -3627,7 +3618,7 @@ version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d34f1408f55294453790c48b2f1ebbb1c5b4b7563eb1f418bcfcfdbb06ebb4e7"
 dependencies = [
- "getrandom 0.2.6",
+ "getrandom 0.2.7",
 ]
 
 [[package]]
@@ -3696,7 +3687,7 @@ version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b033d837a7cf162d7993aded9304e30a83213c648b6e389db233191f891e5c2b"
 dependencies = [
- "getrandom 0.2.6",
+ "getrandom 0.2.7",
  "redox_syscall",
  "thiserror",
 ]
@@ -3704,7 +3695,7 @@ dependencies = [
 [[package]]
 name = "reedline"
 version = "0.6.0"
-source = "git+https://github.com/nushell/reedline?branch=main#4f25ce5633045d8064d164c6b9291fc63502fd43"
+source = "git+https://github.com/nushell/reedline?branch=main#12dc30ce0ae99b58cfa8f13a51b056e9b4022c2d"
 dependencies = [
  "chrono",
  "crossterm",
@@ -3712,8 +3703,8 @@ dependencies = [
  "nu-ansi-term",
  "serde",
  "strip-ansi-escapes",
- "strum 0.24.0",
- "strum_macros 0.24.0",
+ "strum 0.24.1",
+ "strum_macros 0.24.1",
  "thiserror",
  "unicode-segmentation",
  "unicode-width",
@@ -3756,9 +3747,9 @@ dependencies = [
 
 [[package]]
 name = "reqwest"
-version = "0.11.10"
+version = "0.11.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46a1f7aa4f35e5e8b4160449f51afc758f0ce6454315a9fa7d0d113e958c41eb"
+checksum = "b75aa69a3f06bbcc66ede33af2af253c6f7a86b1ca0033f60c580a27074fbf92"
 dependencies = [
  "base64",
  "bytes",
@@ -3783,6 +3774,7 @@ dependencies = [
  "serde_urlencoded",
  "tokio",
  "tokio-native-tls",
+ "tower-service",
  "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -4379,9 +4371,9 @@ dependencies = [
 
 [[package]]
 name = "strum"
-version = "0.24.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e96acfc1b70604b8b2f1ffa4c57e59176c7dbb05d556c71ecd2f5498a1dee7f8"
+checksum = "063e6045c0e62079840579a7e47a355ae92f60eb74daaf156fb1e84ba164e63f"
 
 [[package]]
 name = "strum_macros"
@@ -4397,9 +4389,9 @@ dependencies = [
 
 [[package]]
 name = "strum_macros"
-version = "0.24.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6878079b17446e4d3eba6192bb0a2950d5b14f0ed8424b852310e5a94345d0ef"
+checksum = "9550962e7cf70d9980392878dfaf1dcc3ece024f4cf3bf3c46b978d0bad61d6c"
 dependencies = [
  "heck 0.4.0",
  "proc-macro2",
@@ -4515,9 +4507,9 @@ dependencies = [
 
 [[package]]
 name = "tao"
-version = "0.9.1"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53da5dd98a3c605a3ca8fe967d7c50eba8a36072ff13e04e24402b2c492ac55a"
+checksum = "d2497feadd60f2a5a7f124572d7a44b2aba589a0ad2a65d3aaf2d073c327c3b8"
 dependencies = [
  "bitflags",
  "cairo-rs",
@@ -4582,13 +4574,12 @@ dependencies = [
 
 [[package]]
 name = "tauri"
-version = "1.0.0-rc.14"
+version = "1.0.0-rc.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81af088a87f908dab3a268f92e3c331e911bed6b1756bbfaeadedfe9dd40fe4f"
+checksum = "cb533e95e09fd191ef8e0a0ee6b61701b5f32175e48f82854a71a8f8367bdb41"
 dependencies = [
  "anyhow",
  "attohttpc",
- "bincode",
  "cocoa",
  "dirs-next",
  "embed_plist",
@@ -4628,7 +4619,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "url",
- "uuid 1.1.1",
+ "uuid 1.1.2",
  "webkit2gtk",
  "webview2-com",
  "windows 0.37.0",
@@ -4636,9 +4627,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-build"
-version = "1.0.0-rc.12"
+version = "1.0.0-rc.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bbf472a3caf7ec80358996056fe56f0ff3f91f71bc42e96efdbdc3c2618511a"
+checksum = "58f9a1c87ad53f584f970b06c9243b39d1c2aeca6116dd04c641f406133053b0"
 dependencies = [
  "anyhow",
  "cargo_toml",
@@ -4651,9 +4642,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-codegen"
-version = "1.0.0-rc.8"
+version = "1.0.0-rc.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ae4ebcd190eb22fcee58b40b77d32f5b372a20440833bf27ae7921db131ecca"
+checksum = "ceb3b7cb66f1a6ca30f601cccfa01820477881c27412909a3e6f80b6a2f73815"
 dependencies = [
  "base64",
  "brotli",
@@ -4668,15 +4659,15 @@ dependencies = [
  "sha2 0.10.2",
  "tauri-utils",
  "thiserror",
- "uuid 1.1.1",
+ "uuid 1.1.2",
  "walkdir",
 ]
 
 [[package]]
 name = "tauri-macros"
-version = "1.0.0-rc.8"
+version = "1.0.0-rc.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc72220c1e52ecb33b4d9f04ff171009f100d28789c18049e19e374ec0355531"
+checksum = "07883238ade4c96be38a6a0025f15cbb5e0539fe99ba92d444af9cdbc656b613"
 dependencies = [
  "heck 0.4.0",
  "proc-macro2",
@@ -4688,9 +4679,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-runtime"
-version = "0.6.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc343e974f76c0f5471da85f87510bb54dfc9a7664f3e649af58f49887965e43"
+checksum = "7bad3a8ce06d4e71a52efef175446c8eb7e9109b6f988782fdc6a234526f226a"
 dependencies = [
  "gtk",
  "http",
@@ -4700,16 +4691,16 @@ dependencies = [
  "serde_json",
  "tauri-utils",
  "thiserror",
- "uuid 1.1.1",
+ "uuid 1.1.2",
  "webview2-com",
  "windows 0.37.0",
 ]
 
 [[package]]
 name = "tauri-runtime-wry"
-version = "0.6.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0cd6fe3f8dc12a9c409ee6da19379636525e0ff8da12897c04dc1e76b8c8ff62"
+checksum = "0c2cbc41ea88305f3e5dc133cc5c717c6913a15f121f99e7a238a0135dac083e"
 dependencies = [
  "cocoa",
  "gtk",
@@ -4717,7 +4708,7 @@ dependencies = [
  "rand 0.8.5",
  "tauri-runtime",
  "tauri-utils",
- "uuid 1.1.1",
+ "uuid 1.1.2",
  "webkit2gtk",
  "webview2-com",
  "windows 0.37.0",
@@ -4726,9 +4717,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-utils"
-version = "1.0.0-rc.8"
+version = "1.0.0-rc.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a636fa13c9210cc19243e3efee408fe0c09a3de820c329c61fecb25dbf1e643"
+checksum = "b09e7ec7933a833f3b64e932a9d32d94705687aa5caa3cacf43222876a6d7e24"
 dependencies = [
  "brotli",
  "ctor",
@@ -5069,9 +5060,9 @@ checksum = "099b7128301d285f79ddd55b9a83d5e6b9e97c92e0ea0daebee7263e932de992"
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d22af068fba1eb5edcb4aea19d382b2a3deb4c8f9d475c589b6ada9e0fd493ee"
+checksum = "5bd2fe26506023ed7b5e1e315add59d6f584c621d037f9368fea9cfb988f368c"
 
 [[package]]
 name = "unicode-linebreak"
@@ -5166,16 +5157,16 @@ version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 dependencies = [
- "getrandom 0.2.6",
+ "getrandom 0.2.7",
 ]
 
 [[package]]
 name = "uuid"
-version = "1.1.1"
+version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6d5d669b51467dcf7b2f1a796ce0f955f05f01cafda6c19d6e95f730df29238"
+checksum = "dd6469f4314d5f1ffec476e05f17cc9a78bc7a27a6a857842170bdf8d6f98d2f"
 dependencies = [
- "getrandom 0.2.6",
+ "getrandom 0.2.7",
 ]
 
 [[package]]
@@ -5294,9 +5285,9 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
 
 [[package]]
 name = "wasm-bindgen"
-version = "0.2.80"
+version = "0.2.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27370197c907c55e3f1a9fbe26f44e937fe6451368324e009cba39e139dc08ad"
+checksum = "7c53b543413a17a202f4be280a7e5c62a1c69345f5de525ee64f8cfdbc954994"
 dependencies = [
  "cfg-if 1.0.0",
  "wasm-bindgen-macro",
@@ -5304,9 +5295,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-backend"
-version = "0.2.80"
+version = "0.2.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53e04185bfa3a779273da532f5025e33398409573f348985af9a1cbf3774d3f4"
+checksum = "5491a68ab4500fa6b4d726bd67408630c3dbe9c4fe7bda16d5c82a1fd8c7340a"
 dependencies = [
  "bumpalo",
  "lazy_static",
@@ -5319,9 +5310,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-futures"
-version = "0.4.30"
+version = "0.4.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f741de44b75e14c35df886aff5f1eb73aa114fa5d4d00dcd37b5e01259bf3b2"
+checksum = "de9a9cec1733468a8c657e57fa2413d2ae2c0129b95e87c5b72b8ace4d13f31f"
 dependencies = [
  "cfg-if 1.0.0",
  "js-sys",
@@ -5331,9 +5322,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro"
-version = "0.2.80"
+version = "0.2.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17cae7ff784d7e83a2fe7611cfe766ecf034111b49deb850a3dc7699c08251f5"
+checksum = "c441e177922bc58f1e12c022624b6216378e5febc2f0533e41ba443d505b80aa"
 dependencies = [
  "quote",
  "wasm-bindgen-macro-support",
@@ -5341,9 +5332,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro-support"
-version = "0.2.80"
+version = "0.2.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99ec0dc7a4756fffc231aab1b9f2f578d23cd391390ab27f952ae0c9b3ece20b"
+checksum = "7d94ac45fcf608c1f45ef53e748d35660f168490c10b23704c7779ab8f5c3048"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5354,9 +5345,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-shared"
-version = "0.2.80"
+version = "0.2.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d554b7f530dee5964d9a9468d95c1f8b8acae4f282807e7d27d4b03099a46744"
+checksum = "6a89911bd99e5f3659ec4acf9c4d93b0a90fe4a2a11f15328472058edc5261be"
 
 [[package]]
 name = "wax"
@@ -5380,9 +5371,9 @@ dependencies = [
 
 [[package]]
 name = "web-sys"
-version = "0.3.57"
+version = "0.3.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b17e741662c70c8bd24ac5c5b18de314a2c26c32bf8346ee1e6f53de919c283"
+checksum = "2fed94beee57daf8dd7d51f2b15dc2bcde92d7a72304cdf662a4371008b71b90"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
@@ -5750,9 +5741,9 @@ dependencies = [
 
 [[package]]
 name = "wry"
-version = "0.17.0"
+version = "0.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38425583b1f8c16c074fa4f962f7f0ddd5cb2f6b241a494a26db5eca3ccd4fd7"
+checksum = "138e84a6f7f0ef90004a244a6dd4125b5fb78074b48c4369ab52b3cac68a863e"
 dependencies = [
  "block",
  "cocoa",
