@@ -52,7 +52,7 @@ fn main() {
     };
     let _ = engine_state.merge_delta(delta, None, &cwd);
 
-    gather_parent_env_vars(&mut engine_state);
+    gather_parent_env_vars(&mut engine_state, &std::env::current_dir().unwrap());
 
     let stack = Stack::new();
 
