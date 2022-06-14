@@ -30,6 +30,7 @@ strip-ansi-escapes = "0.1.1"
 regex = "1.5.5"
 pathdiff = "0.2.1"
 itertools = "0.10.3"
+lscolors = "0.10.0"
 
 [features]
 # by default Tauri runs in production mode
