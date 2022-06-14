@@ -350,6 +350,18 @@
         };
     }
 
+    async function get_color_for_path(name: string): Promise<string> {
+        let val = name.String.val;
+        let color_str = await invoke(
+            "color_file_name_with_lscolors",
+            {
+                pseudo: val
+            }
+        );
+        let html = ansi_to_html(color_str as string);
+        return await Promise.resolve(html);
+    }
+
     function closeCard(id: number) {
         console.log(id);
         for (const pos in cards) {
@@ -509,7 +521,7 @@
                     <input
                         autocapitalize="none"
                         class="input  w-full rounded-sm bg-solarized-base3 pl-2
-                        font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 
+                        font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02
                         dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
                         name="input{id}"
                         value={input}
