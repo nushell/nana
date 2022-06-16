@@ -14,7 +14,10 @@ use parking_lot::Mutex;
 use reedline::Completer;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tauri::{command, Manager, Menu, MenuItem, State, Submenu};
+use tauri::{command, Manager, State};
+
+#[cfg(target_os = "macos")]
+use tauri::{Menu, MenuItem, Submenu};
 
 pub struct MyState {
     engine_state: Mutex<EngineState>,
@@ -122,9 +125,11 @@ fn main() {
     }
 }
 
+
+
 // Set the colors of the titlebar to match the current light/dark theme
 // TODO: pass in RGB colors as args, implement for more OSs, call this when OS theme changes
-fn try_set_titlebar_colors(window: &tauri::Window) {
+fn try_set_titlebar_colors(_window: &tauri::Window) {
     #[cfg(target_os = "windows")]
     {
         use std::{ffi::c_void, mem::size_of};
@@ -137,7 +142,7 @@ fn try_set_titlebar_colors(window: &tauri::Window) {
             0x00e3f6fd // Solarized Light base3
         };
 
-        if let Ok(hwnd) = window.hwnd() {
+        if let Ok(hwnd) = _window.hwnd() {
             let bg_ptr: *const i32 = &bg_color;
             unsafe {
                 // Set titlebar background color
