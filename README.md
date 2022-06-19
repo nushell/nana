@@ -10,10 +10,14 @@ Experimental GUI version of Nushell
 
 ## Dependencies
 
-### Linux Mint
+debian
 
 ```
-> sudo apt install libjavascriptcoregtk-4.0-dev
-> sudo apt install libsoup2.4-dev
-> sudo apt install libwebkit2gtk-4.0-dev
+sudo apt install libwebkit2gtk-4.0-dev libjavascriptcoregtk-4.0-dev libsoup2.4-dev
+```
+
+arch linux
+
+```
+sudo pacman -S webkit2gtk libsoup
 ```
