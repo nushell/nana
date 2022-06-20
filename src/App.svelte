@@ -2,7 +2,7 @@
     import { invoke } from "@tauri-apps/api/tauri";
     import { default as AnsiUp } from "ansi_up";
     import hasAnsi from "has-ansi";
-    import Tailwindcss from "./Tailwindcss.svelte";
+    import "./app.css";
 
     let cardId = 1;
 
@@ -495,8 +495,6 @@
         setFocusByName(ev.target.name);
     }
 </script>
-
-<Tailwindcss />
 
 <main>
     {#each cards as { id, cwd, input, output }}
