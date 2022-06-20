@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { ICompletion } from "../app/Prompt";
+import { ICompletion } from "../app/CompletionList";
 
 export function simpleCommandWithResult(argument: string): Promise<string> {
     return invoke("simple_command_with_result", {

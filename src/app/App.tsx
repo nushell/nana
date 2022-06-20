@@ -1,76 +1,116 @@
-import { useEffect, useState } from "react";
-import { getWorkingDirectory } from "../support/nana";
+import { useEffect, useRef, useState } from "react";
 
-import { Card, ICard, CardPropTypes } from "./Card";
+import { Prompt } from "./Prompt";
+import { IResult } from "./Result";
+
+import { ansiFormat } from "../support/formatting";
+import { getWorkingDirectory } from "../support/nana";
+import { ResultList } from "./ResultList";
 
 export default () => {
+    const promptRef = useRef<HTMLDivElement>(null);
     const [history, setHistory] = useState<string[]>([]);
-    const [cards, setCards] = useState<ICard[]>([]);
+    const [activeHistoryIndex, setActiveHistoryIndex] = useState(-1);
+    const [input, setInput] = useState("");
+    const [results, setResults] = useState<IResult[]>([]);
 
+    const [workingDir, setWorkingDir] = useState("");
+
+    const resetActiveHistoryIndex = () => {
+        setActiveHistoryIndex(history.length);
+    };
+
+    // reset the active history index when the history changes
+    useEffect(resetActiveHistoryIndex, [history.length]);
+
+    // auto-scroll to the prompt whenever a new result is added/removed
     useEffect(() => {
-        if (cards.length === 0) addEmptyCard();
-    }, [cards.length]);
+        promptRef.current?.scrollIntoView({ block: "start" });
+    }, [results.length]);
 
-    const addEmptyCard = async () => {
-        addCard({
-            workingDir: await getWorkingDirectory(),
-        });
-    };
+    // get working directory/bind global key presses on mount
+    useEffect(() => {
+        refreshWorkingDir();
+        window.addEventListener("keydown", handleGlobalKeyDown);
+        () => {
+            window.removeEventListener("keydown", handleGlobalKeyDown);
+        };
+    }, []);
 
-    const addCard = (props: CardPropTypes) => {
-        setCards((cards) => [...cards, { id: cards.length, ...props }]);
-    };
-
-    const addToHistory = (input?: string) => {
-        if (!input) return;
-        if (history.indexOf(input) === -1) {
-            setHistory((history) => [...history, input]);
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+        if (e.ctrlKey && e.key == "l") {
+            // ctrl + l
+            e.preventDefault();
+            setResults([]);
         }
     };
 
-    const removeCard = (cardId: number) => {
-        setCards((cards) => cards.filter(({ id }) => id !== cardId));
+    const refreshWorkingDir = async () => {
+        setWorkingDir(await getWorkingDirectory());
     };
 
-    const updateCard = (cardId: number, props: CardPropTypes) => {
-        return setCards((cards) =>
-            cards.map((orig) => {
-                if (orig.id === cardId) {
-                    return { ...orig, ...props };
-                }
-                return orig;
-            })
-        );
+    const handleResult = async (output: string, duration: number) => {
+        if (history.indexOf(input) === -1) {
+            setHistory((history) => [...history.slice(-25), input]);
+        }
+
+        setResults((results) => [
+            ...results.slice(-10),
+            {
+                id: results.length,
+                workingDir,
+                input,
+                duration,
+                output: JSON.parse(output),
+            },
+        ]);
+        refreshWorkingDir();
+        resetActiveHistoryIndex();
+        setInput("");
     };
 
-    const handleSubmit = async (
-        cardId: number,
-        props: CardPropTypes,
-        isError: boolean
-    ) => {
-        const card = cards.find(({ id }) => id === cardId);
-        const alreadySubmitted = card && card.input !== undefined;
-        updateCard(cardId, props);
-        if (!isError && !alreadySubmitted) addEmptyCard();
+    const handleError = async (output: string) => {
+        setResults((results) => [
+            ...results,
+            {
+                id: results.length,
+                workingDir,
+                input,
+                output: ansiFormat(output),
+            },
+        ]);
+        refreshWorkingDir();
+        setInput("");
+    };
 
-        addToHistory(props.input);
+    const handleHistory = (delta: number) => {
+        const index = activeHistoryIndex + delta;
+        if (index >= 0 && index < history.length) {
+            setInput(history[index]);
+            setActiveHistoryIndex(index);
+        }
     };
 
     return (
-        <main>
-            {cards.map((card) => (
-                <Card
-                    key={card.id}
-                    {...card}
-                    history={history}
-                    onClose={() => {
-                        removeCard(card.id);
-                    }}
-                    onSubmit={(props: CardPropTypes, isError) => {
-                        handleSubmit(card.id, props, isError);
-                    }}
-                />
-            ))}
+        <main className="px-8 py-4 space-y-6">
+            <ResultList results={results} />
+
+            <Prompt
+                ref={promptRef}
+                input={input}
+                onSubmit={handleResult}
+                onSubmitError={handleError}
+                workingDir={workingDir}
+                onHistoryUp={() => {
+                    handleHistory(1);
+                }}
+                onHistoryDown={() => {
+                    handleHistory(-1);
+                }}
+                onChangeInput={(value) => {
+                    setInput(value);
+                }}
+            />
         </main>
     );
 };
