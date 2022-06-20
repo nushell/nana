@@ -1,4 +1,4 @@
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import react from "@vitejs/plugin-react";
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 
 export default defineConfig({
@@ -8,5 +8,5 @@ export default defineConfig({
         strictPort: true,
     },
     envPrefix: ["NODE_", "VITE_", "TAURI_"],
-    plugins: [svelte(), splitVendorChunkPlugin()],
+    plugins: [react(), splitVendorChunkPlugin()],
 });
