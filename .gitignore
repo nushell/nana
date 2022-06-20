@@ -4,9 +4,6 @@ node_modules/
 # built each time
 public/build/
 
-# npm's package lock
-package-lock.json
-
 # rust's target folders
 target/
 src-tauri/WixTools/
