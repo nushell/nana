@@ -19,13 +19,15 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 # enable devtools even in release mode; makes things easier for devs and we don't have a good reason to disable it
 tauri = { version = "1.0.0", features = ["api-all", "devtools"] }
-nu-engine = { git = "https://github.com/nushell/nushell", branch = "main", all-features = true }
-nu-protocol = { git = "https://github.com/nushell/nushell", branch = "main", all-features = true }
-nu-parser = { git = "https://github.com/nushell/nushell", branch = "main", all-features = true }
-nu-path = { git = "https://github.com/nushell/nushell", branch = "main", all-features = true }
-nu-command = { git = "https://github.com/nushell/nushell", branch = "main", all-features = true }
-nu-cli = { git = "https://github.com/nushell/nushell", branch = "main", all-features = true }
-reedline = { git = "https://github.com/nushell/reedline", branch = "main", features = ["bashisms"] }
+nu-engine = { git = "https://github.com/nushell/nushell", branch = "main" }
+nu-protocol = { git = "https://github.com/nushell/nushell", branch = "main" }
+nu-parser = { git = "https://github.com/nushell/nushell", branch = "main" }
+nu-path = { git = "https://github.com/nushell/nushell", branch = "main" }
+nu-command = { git = "https://github.com/nushell/nushell", branch = "main" }
+nu-cli = { git = "https://github.com/nushell/nushell", branch = "main" }
+reedline = { git = "https://github.com/nushell/reedline", branch = "main", features = [
+  "bashisms",
+] }
 parking_lot = "0.12.0"
 strip-ansi-escapes = "0.1.1"
 regex = "1.5.5"
@@ -44,8 +46,8 @@ custom-protocol = ["tauri/custom-protocol"]
 [target.'cfg(windows)'.dependencies.windows]
 version = "0.37.0"
 features = [
-    "alloc",
-    "Win32_Foundation",
-    "Win32_Graphics_Dwm",
-    "Win32_System_Registry",
+  "alloc",
+  "Win32_Foundation",
+  "Win32_Graphics_Dwm",
+  "Win32_System_Registry",
 ]
