@@ -4,10 +4,10 @@
         "version": "0.1.0"
     },
     "build": {
-        "distDir": "../public",
-        "devPath": "http://localhost:8080",
-        "beforeDevCommand": "npm run dev",
-        "beforeBuildCommand": "npm run build"
+        "distDir": "../dist",
+        "devPath": "http://localhost:3000",
+        "beforeDevCommand": "yarn dev",
+        "beforeBuildCommand": "yarn build"
     },
     "tauri": {
         "bundle": {
@@ -52,8 +52,8 @@
         "windows": [
             {
                 "title": "Nana",
-                "width": 800,
-                "height": 600,
+                "width": 960,
+                "height": 1080,
                 "resizable": true,
                 "fullscreen": false
             }

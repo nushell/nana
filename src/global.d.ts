@@ -1,3 +1,1 @@
-/// <reference types="svelte" />
-type Dict<T> = Record<string, T>;
-type Nullable<T> = T | null;
+/// <reference types="vite/client" />

@@ -2,10 +2,7 @@
 node_modules/
 
 # built each time
-public/build/
-
-# npm's package lock
-package-lock.json
+dist/
 
 # rust's target folders
 target/

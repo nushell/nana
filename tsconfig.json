@@ -1,6 +1,7 @@
 {
-    "extends": "@tsconfig/svelte/tsconfig.json",
-
-    "include": ["src/**/*"],
-    "exclude": ["node_modules/*", "__sapper__/*", "public/*"]
+    "extends": "@tsconfig/vite-react/tsconfig.json",
+    "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.tsx"],
+    "compilerOptions": {
+        "jsx": "react-jsx"
+    }
 }
