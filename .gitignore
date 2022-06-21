@@ -11,3 +11,6 @@ src-tauri/target/
 
 # mac's infamous .ds_store file
 .DS_Store
+
+# ignore public folder
+public/

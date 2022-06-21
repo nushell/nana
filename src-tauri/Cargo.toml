@@ -25,9 +25,7 @@ nu-parser = { git = "https://github.com/nushell/nushell", branch = "main" }
 nu-path = { git = "https://github.com/nushell/nushell", branch = "main" }
 nu-command = { git = "https://github.com/nushell/nushell", branch = "main" }
 nu-cli = { git = "https://github.com/nushell/nushell", branch = "main" }
-reedline = { git = "https://github.com/nushell/reedline", branch = "main", features = [
-  "bashisms",
-] }
+reedline = { version = "0.7.0", features = ["bashisms", "sqlite"] }
 parking_lot = "0.12.0"
 strip-ansi-escapes = "0.1.1"
 regex = "1.5.5"
@@ -51,3 +49,6 @@ features = [
   "Win32_Graphics_Dwm",
   "Win32_System_Registry",
 ]
+
+[patch.crates-io]
+reedline = { git = "https://github.com/nushell/reedline", branch = "main"}
