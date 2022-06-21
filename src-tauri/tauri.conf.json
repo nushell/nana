@@ -11,7 +11,7 @@
     },
     "tauri": {
         "bundle": {
-            "active": true,
+            "active": false,
             "targets": "all",
             "identifier": "nushell.nana",
             "icon": [
