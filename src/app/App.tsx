@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { getWorkingDirectory } from "../support/nana";
+import { useEffect, useState } from 'react';
+import { getWorkingDirectory } from '../support/nana';
 
-import { Card, ICard, CardPropTypes } from "./Card";
+import { Card, ICard, CardPropTypes } from './Card';
 
 export default () => {
     const [history, setHistory] = useState<string[]>([]);

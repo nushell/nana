@@ -125,8 +125,6 @@ fn main() {
     }
 }
 
-
-
 // Set the colors of the titlebar to match the current light/dark theme
 // TODO: pass in RGB colors as args, implement for more OSs, call this when OS theme changes
 fn try_set_titlebar_colors(_window: &tauri::Window) {
