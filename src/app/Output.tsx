@@ -17,7 +17,34 @@ const Binary = ({ value: { val } }: { value: any }): any => {
     if (val[0] == 0x89 && val[1] == 0x50 && val[2] == 0x4e && val[3] == 0x47) {
         return <Image value={val} type="image/png" />;
     } else {
-        // todo
+        var header = [];
+        var arow = [];
+        var rows = [];
+        for (let idx = 0; idx < 16; ++idx) {
+            header.push(<th>{idx.toString(16)}</th>);
+        }
+        let arrLen = val.length;
+        for (let idx = 0; idx < arrLen; ++idx) {
+            if (idx % 16 == 0) {
+                if (idx > 0) {
+                    rows.push(<tr>{arow}</tr>);
+                    arow = [];
+                }
+                arow.push(<th>{((idx / 16) * 16).toString(16)}</th>);
+            }
+            arow.push(<td>{val[idx].toString(16)}</td>);
+        }
+        return (
+            <table className="styled-table">
+                <tr>
+                    <th>
+                        <strong>hex</strong>
+                    </th>
+                    {header}
+                </tr>
+                {rows}
+            </table>
+        );
     }
 };
 
