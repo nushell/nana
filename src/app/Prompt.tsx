@@ -1,5 +1,5 @@
-import { KeyboardEvent, useRef } from "react";
-import { complete, simpleCommandWithResult } from "../support/nana";
+import { KeyboardEvent, useRef } from 'react';
+import { complete, simpleCommandWithResult } from '../support/nana';
 
 export type ICompletion = {
     completion: string;
@@ -64,19 +64,19 @@ export const Prompt = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
         switch (e.key) {
-            case "ArrowUp":
+            case 'ArrowUp':
                 e.preventDefault();
                 onHistoryUp();
                 break;
-            case "ArrowDown":
+            case 'ArrowDown':
                 e.preventDefault();
                 onHistoryDown();
                 break;
-            case "Enter":
+            case 'Enter':
                 e.preventDefault();
                 handleSubmit();
                 break;
-            case "Tab":
+            case 'Tab':
                 if (
                     e.target instanceof HTMLInputElement &&
                     e.target.selectionStart !== null
@@ -95,7 +95,7 @@ export const Prompt = ({
             autoCapitalize="none"
             type="text"
             className="input m-0 w-full rounded-sm bg-solarized-base3 py-0 pl-2 font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
-            value={input ?? ""}
+            value={input ?? ''}
             onKeyDown={handleKeyDown}
             onChange={(e) => {
                 handleChange(e.target.value);

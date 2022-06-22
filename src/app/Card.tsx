@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { Output } from "./Output";
-import { Prompt } from "./Prompt";
-import { getWorkingDirectory } from "../support/nana";
-import { ansiFormat } from "../support/formatting";
-import { FaTimes } from "react-icons/fa";
+import { useEffect, useState } from 'react';
+import { Output } from './Output';
+import { Prompt } from './Prompt';
+import { getWorkingDirectory } from '../support/nana';
+import { ansiFormat } from '../support/formatting';
+import { FaTimes } from 'react-icons/fa';
 
 export type CardPropTypes = {
     workingDir?: string;
@@ -83,7 +83,7 @@ export const Card = ({
             >
                 <div id="header" className="flex">
                     <Prompt
-                        input={input ?? ""}
+                        input={input ?? ''}
                         onSubmit={handleSubmit}
                         onSubmitError={handleError}
                         onHistoryUp={() => {
