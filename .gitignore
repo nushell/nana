@@ -14,3 +14,7 @@ src-tauri/target/
 
 # ignore public folder
 public/
+
+# ignore vscode stuff
+.vscode/launch.json
+.vscode/tasks.json
