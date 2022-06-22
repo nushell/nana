@@ -1,17 +1,17 @@
-import AnsiUp from "ansi_up";
-import hasAnsi from "has-ansi";
+import AnsiUp from 'ansi_up';
+import hasAnsi from 'has-ansi';
 
 // from: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
 export function humanFileSize(bytes: number, si = false, dp = 1) {
     const thresh = si ? 1000 : 1024;
 
     if (Math.abs(bytes) < thresh) {
-        return bytes + " B";
+        return bytes + ' B';
     }
 
     const units = si
-        ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-        : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+        ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+        : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
     let u = -1;
     const r = 10 ** dp;
 
@@ -23,7 +23,7 @@ export function humanFileSize(bytes: number, si = false, dp = 1) {
         u < units.length - 1
     );
 
-    return bytes.toFixed(dp) + " " + units[u];
+    return bytes.toFixed(dp) + ' ' + units[u];
 }
 
 /// Format a duration in nanoseconds into a string
@@ -56,55 +56,55 @@ export function humanDuration(dur: number) {
     let days = Math.floor(hours / 24);
     hours = hours % 24;
 
-    let outputPrep = "";
+    let outputPrep = '';
 
     if (days != 0) {
-        outputPrep += days + "day";
+        outputPrep += days + 'day';
     }
 
     if (hours != 0) {
-        if (outputPrep != "") {
-            outputPrep += " ";
+        if (outputPrep != '') {
+            outputPrep += ' ';
         }
-        outputPrep += hours + "hr";
+        outputPrep += hours + 'hr';
     }
 
     if (mins != 0) {
-        if (outputPrep != "") {
-            outputPrep += " ";
+        if (outputPrep != '') {
+            outputPrep += ' ';
         }
-        outputPrep += mins + "min";
+        outputPrep += mins + 'min';
     }
     // output 0sec for zero duration
     if (duration == 0 || secs != 0) {
-        if (outputPrep != "") {
-            outputPrep += " ";
+        if (outputPrep != '') {
+            outputPrep += ' ';
         }
-        outputPrep += secs + "sec";
+        outputPrep += secs + 'sec';
     }
 
     if (millis != 0) {
-        if (outputPrep != "") {
-            outputPrep += " ";
+        if (outputPrep != '') {
+            outputPrep += ' ';
         }
-        outputPrep += millis + "ms";
+        outputPrep += millis + 'ms';
     }
 
     if (micros != 0) {
-        if (outputPrep != "") {
-            outputPrep += " ";
+        if (outputPrep != '') {
+            outputPrep += ' ';
         }
-        outputPrep += micros + "us";
+        outputPrep += micros + 'us';
     }
 
     if (nanos != 0) {
-        if (outputPrep != "") {
-            outputPrep += " ";
+        if (outputPrep != '') {
+            outputPrep += ' ';
         }
-        outputPrep += nanos + "ns";
+        outputPrep += nanos + 'ns';
     }
 
-    return (sign == -1 ? "-" : "") + outputPrep;
+    return (sign == -1 ? '-' : '') + outputPrep;
 }
 
 export function ansiFormat(text_str: string) {
@@ -115,7 +115,7 @@ export function ansiFormat(text_str: string) {
         let linked_html = html.replace(
             /]8;;(.+)\\(.+)]8;;\\/,
             function (_match, p1, p2) {
-                return '<a target="_blank" href="' + p1 + '">' + p2 + "</a>";
+                return '<a target="_blank" href="' + p1 + '">' + p2 + '</a>';
             }
         );
         return linked_html;
@@ -135,5 +135,5 @@ export function UInt8ArrayToString(arr: Uint8Array) {
             )
         );
     }
-    return c.join("");
+    return c.join('');
 }

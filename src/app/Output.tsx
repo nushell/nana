@@ -2,7 +2,7 @@ import {
     humanDuration,
     humanFileSize,
     UInt8ArrayToString,
-} from "../support/formatting";
+} from '../support/formatting';
 
 const Image = ({ value, type }: { value: any; type: string }) => (
     <img

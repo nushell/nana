@@ -1,5 +1,5 @@
-import react from "@vitejs/plugin-react";
-import { defineConfig, splitVendorChunkPlugin } from "vite";
+import react from '@vitejs/plugin-react';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
 
 export default defineConfig({
     clearScreen: false,
@@ -7,6 +7,6 @@ export default defineConfig({
         port: 3000,
         strictPort: true,
     },
-    envPrefix: ["NODE_", "VITE_", "TAURI_"],
+    envPrefix: ['NODE_', 'VITE_', 'TAURI_'],
     plugins: [react(), splitVendorChunkPlugin()],
 });
