@@ -4,9 +4,9 @@ Experimental GUI version of Nushell
 
 ## Getting started
 
--   `yarn install`
--   `yarn tauri dev` (or to build a release: `yarn tauri build`)
--   If you use [`just`](https://github.com/casey/just), `just watch` and `just build`, **and run `just` will show all the available commands**
+- `yarn install`
+- `yarn tauri dev` (or to build a release: `yarn tauri build`)
+- If you use [`just`](https://github.com/casey/just), `just watch` and `just build`, **and run `just` will show all the available commands**
 
 ## Dependencies
 
