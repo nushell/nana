@@ -6,6 +6,7 @@ import {
 
 const Image = ({ value, type }: { value: any; type: string }) => (
   <img
+    alt="image"
     className="h-auto max-w-full"
     src={`data:${type};base64,${btoa(
       UInt8ArrayToString(new Uint8Array(value))
