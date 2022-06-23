@@ -1,6 +1,14 @@
 # built with npm install
 node_modules/
 
+# yarn cache files
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # built each time
 dist/
 
