@@ -24,7 +24,7 @@ const Binary = ({ value: { val } }: { value: any }): any => {
     for (let idx = 0; idx < 16; ++idx) {
       header.push(<th>{idx.toString(16)}</th>);
     }
-    let arrLen = val.length;
+    let arrLen = val.length > 256 ? 256 : val.length;
     for (let idx = 0; idx < arrLen; ++idx) {
       if (idx % 16 == 0) {
         if (idx > 0) {
