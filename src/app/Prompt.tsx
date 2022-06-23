@@ -87,6 +87,7 @@ export const Prompt = ({
 
   return (
     <input
+      title="nushell input"
       ref={inputRef}
       autoFocus
       autoCapitalize="none"
