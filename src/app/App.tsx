@@ -1,59 +1,68 @@
-import { useEffect, useState } from 'react';
+import { nanoid } from 'nanoid';
+import { useCallback, useEffect } from 'react';
+import { useStateDispatch } from 'use-state-dispatch';
 import { getWorkingDirectory } from '../support/nana';
+import { Card, CardPropTypes, ICard } from './Card';
 
-import { Card, ICard, CardPropTypes } from './Card';
+type HistoryState = string[];
 
-export default () => {
-  const [history, setHistory] = useState<string[]>([]);
-  const [cards, setCards] = useState<ICard[]>([]);
+const historyReducers = {
+  push(state: HistoryState, input: string): HistoryState {
+    return [...state, input];
+  },
+};
+
+type CardState = ICard[];
+
+const cardReducers = {
+  add(state: CardState, card: ICard) {
+    return [...state, card];
+  },
+
+  remove(state: CardState, cardId: string) {
+    return state.filter((card) => card.id === cardId);
+  },
+
+  // TODO: break this function into multiple
+  update(state: CardState, cardId: string, props: Partial<CardPropTypes>) {
+    return state.map((orig) => {
+      if (orig.id === cardId) {
+        return { ...orig, ...props };
+      }
+      return orig;
+    });
+  },
+};
+
+export const App = () => {
+  const [history, dispatchHistory] = useStateDispatch(
+    [] as HistoryState,
+    historyReducers
+  );
+
+  const [cards, dispatchCards] = useStateDispatch([] as ICard[], cardReducers);
+
+  const addEmptyCard = useCallback(async () => {
+    const workingDir = await getWorkingDirectory();
+
+    dispatchCards.add({ workingDir, id: nanoid(), input: '' });
+  }, []);
 
   useEffect(() => {
     if (cards.length === 0) addEmptyCard();
   }, [cards.length]);
 
-  const addEmptyCard = async () => {
-    addCard({
-      workingDir: await getWorkingDirectory(),
-    });
-  };
-
-  const addCard = (props: CardPropTypes) => {
-    setCards((cards) => [...cards, { id: cards.length, ...props }]);
-  };
-
-  const addToHistory = (input?: string) => {
-    if (!input) return;
-    if (history.indexOf(input) === -1) {
-      setHistory((history) => [...history, input]);
-    }
-  };
-
-  const removeCard = (cardId: number) => {
-    setCards((cards) => cards.filter(({ id }) => id !== cardId));
-  };
-
-  const updateCard = (cardId: number, props: CardPropTypes) => {
-    return setCards((cards) =>
-      cards.map((orig) => {
-        if (orig.id === cardId) {
-          return { ...orig, ...props };
-        }
-        return orig;
-      })
-    );
-  };
-
-  const handleSubmit = async (
-    cardId: number,
+  const handleSubmit = (
+    cardId: string,
     props: CardPropTypes,
     isError: boolean
   ) => {
-    const card = cards.find(({ id }) => id === cardId);
-    const alreadySubmitted = card && card.input !== undefined;
-    updateCard(cardId, props);
-    if (!isError && !alreadySubmitted) addEmptyCard();
+    const cardIndex = cards.findIndex(({ id }) => id === cardId);
+    const isLast = cardIndex === cards.length;
+    dispatchCards.update(cardId, props);
+    if (!isLast) addEmptyCard();
 
-    addToHistory(props.input);
+    dispatchHistory.push(props.input);
   };
 
   return (
@@ -64,11 +73,12 @@ export default () => {
           {...card}
           history={history}
           onClose={() => {
-            removeCard(card.id);
+            dispatchCards.remove(card.id);
           }}
           onSubmit={(props: CardPropTypes, isError) => {
             handleSubmit(card.id, props, isError);
           }}
+          onInputChange={(input) => dispatchCards.update(card.id, { input })}
         />
       ))}
     </main>

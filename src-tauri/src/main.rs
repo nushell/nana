@@ -19,7 +19,7 @@ use tauri::{command, Manager, State};
 #[cfg(target_os = "macos")]
 use tauri::{Menu, MenuItem, Submenu};
 
-pub struct MyState {
+pub struct NanaState {
     engine_state: Mutex<EngineState>,
     stack: Mutex<Stack>,
 }
@@ -62,7 +62,7 @@ fn main() {
     #[cfg(target_os = "macos")]
     {
         tauri::Builder::default()
-            .manage(MyState {
+            .manage(NanaState {
                 engine_state: Mutex::new(engine_state),
                 stack: Mutex::new(stack),
             })
@@ -104,7 +104,7 @@ fn main() {
     #[cfg(not(target_os = "macos"))]
     {
         tauri::Builder::default()
-            .manage(MyState {
+            .manage(NanaState {
                 engine_state: Mutex::new(engine_state),
                 stack: Mutex::new(stack),
             })
@@ -158,7 +158,7 @@ fn try_set_titlebar_colors(_window: &tauri::Window) {
 }
 
 #[command]
-fn simple_command_with_result(argument: String, state: State<MyState>) -> Result<String, String> {
+fn simple_command_with_result(argument: String, state: State<NanaState>) -> Result<String, String> {
     let mut engine_state = state.engine_state.lock();
     let mut stack = state.stack.lock();
     let result = nushell::eval_nushell(
@@ -198,7 +198,7 @@ fn simple_command_with_result(argument: String, state: State<MyState>) -> Result
 }
 
 #[command]
-fn get_working_directory(state: State<MyState>) -> Result<String, String> {
+fn get_working_directory(state: State<NanaState>) -> Result<String, String> {
     let engine_state = state.engine_state.lock();
     let stack = state.stack.lock();
     let cwd = nu_engine::env::current_dir_str(&engine_state, &stack);
@@ -213,7 +213,7 @@ fn get_working_directory(state: State<MyState>) -> Result<String, String> {
 fn complete(
     argument: String,
     position: i64,
-    state: State<MyState>,
+    state: State<NanaState>,
 ) -> Result<Vec<CompletionRecord>, String> {
     let engine_state = state.engine_state.lock();
     let stack = state.stack.lock();
@@ -237,7 +237,7 @@ fn complete(
 #[command]
 fn color_file_name_with_lscolors(
     pseudo: String,
-    state: State<MyState>,
+    state: State<NanaState>,
 ) -> Result<String, ShellError> {
     let engine_state = state.engine_state.lock();
     let stack = state.stack.lock();

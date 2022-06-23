@@ -8,7 +8,7 @@ export type ICompletion = {
 
 type PromptPropType = {
   input: string;
-  onChangeInput: (input: string) => void;
+  onInputChange: (input: string) => void;
   onSubmit: (output: string) => void;
   onSubmitError: (output: string) => void;
   onHistoryUp: () => void;
@@ -17,7 +17,7 @@ type PromptPropType = {
 
 export const Prompt = ({
   input,
-  onChangeInput,
+  onInputChange,
   onSubmit,
   onSubmitError,
   onHistoryUp,
@@ -33,10 +33,6 @@ export const Prompt = ({
     return before + completion.completion + after;
   };
 
-  const handleChange = (input: string) => {
-    onChangeInput(input);
-  };
-
   const handleCompletion = async (position: number) => {
     const results: ICompletion[] = await complete({
       argument: input,
@@ -44,7 +40,7 @@ export const Prompt = ({
     });
 
     if (results.length > 0) {
-      handleChange(applyCompletion(results[0], position));
+      onInputChange(applyCompletion(results[0], position));
     }
   };
 
@@ -96,7 +92,7 @@ export const Prompt = ({
       value={input ?? ''}
       onKeyDown={handleKeyDown}
       onChange={(e) => {
-        handleChange(e.target.value);
+        onInputChange(e.target.value);
       }}
     />
   );
