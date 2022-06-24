@@ -2,6 +2,7 @@
   "extends": "@tsconfig/vite-react/tsconfig.json",
   "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.tsx"],
   "compilerOptions": {
+    "lib": ["ESNext"],
     "jsx": "react-jsx"
   }
 }

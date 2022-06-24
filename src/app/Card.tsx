@@ -1,33 +1,38 @@
 import { useEffect, useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
+import { ansiFormat } from '../support/formatting';
+import { getWorkingDirectory } from '../support/nana';
 import { Output } from './Output';
 import { Prompt } from './Prompt';
-import { getWorkingDirectory } from '../support/nana';
-import { ansiFormat } from '../support/formatting';
-import { FaTimes } from 'react-icons/fa';
 
 export type CardPropTypes = {
   workingDir?: string;
-  input?: string;
+  input: string;
   output?: string;
 };
 
 export type ICard = CardPropTypes & {
-  id: number;
+  id: string;
 };
 
-export const Card = ({
-  input: initialInput,
-  workingDir,
-  history,
-  output,
-  onClose,
-  onSubmit,
-}: ICard & {
-  history: string[];
-  onSubmit: (newProps: Partial<CardPropTypes>, isError: boolean) => void;
-  onClose: () => void;
-}) => {
-  const [input, setInput] = useState(initialInput);
+export const Card = (
+  props: ICard & {
+    history: string[];
+    onInputChange: (newInput: string) => void;
+    onSubmit: (newProps: CardPropTypes, isError: boolean) => void;
+    onClose: () => void;
+  }
+) => {
+  const {
+    input,
+    workingDir,
+    history,
+    output,
+    onClose,
+    onSubmit,
+    onInputChange,
+  } = props;
+
   const [activeHistoryIndex, setActiveHistoryIndex] = useState(-1);
 
   const resetActiveHistoryIndex = () => {
@@ -62,7 +67,7 @@ export const Card = ({
   const handleHistory = (delta: number) => {
     const index = activeHistoryIndex + delta;
     if (index >= 0 && index < history.length) {
-      setInput(history[index]);
+      onInputChange(history[index]);
       setActiveHistoryIndex(index);
     }
   };
@@ -92,9 +97,7 @@ export const Card = ({
             onHistoryDown={() => {
               handleHistory(1);
             }}
-            onChangeInput={(value) => {
-              setInput(value);
-            }}
+            onInputChange={onInputChange}
           />
         </div>
 

@@ -1,59 +1,85 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { getWorkingDirectory } from '../support/nana';
+import { randomId } from '../support/randomId';
+import { Card, CardPropTypes, ICard } from './Card';
 
-import { Card, ICard, CardPropTypes } from './Card';
+type HistoryState = string[];
 
-export default () => {
-  const [history, setHistory] = useState<string[]>([]);
-  const [cards, setCards] = useState<ICard[]>([]);
+type HistoryAction = {
+  type: 'push';
+  input: string;
+};
+
+const historyReducer = (state: HistoryState, action: HistoryAction) => {
+  switch (action.type) {
+    case 'push':
+      return [...state, action.input];
+  }
+};
+
+type CardsState = ICard[];
+
+type CardsAction =
+  | {
+      type: 'add';
+      card: ICard;
+    }
+  | {
+      type: 'remove';
+      cardId: string;
+    }
+  | {
+      // TODO: break this action into multiple, more explicit, actions
+      type: 'update';
+      cardId: string;
+      props: Partial<CardPropTypes>;
+    };
+
+const cardsReducer = (state: CardsState, action: CardsAction) => {
+  switch (action.type) {
+    case 'add':
+      return [...state, action.card];
+    case 'remove':
+      return state.filter((card) => card.id === action.cardId);
+    case 'update':
+      return state.map((orig) => {
+        if (orig.id === action.cardId) {
+          return { ...orig, ...action.props };
+        }
+        return orig;
+      });
+  }
+};
+
+export const App = () => {
+  const [history, dispatchHistory] = useReducer(historyReducer, []);
+  const [cards, dispatchCards] = useReducer(cardsReducer, []);
+
+  const addEmptyCard = async () => {
+    const workingDir = await getWorkingDirectory();
+
+    dispatchCards({
+      type: 'add',
+      card: { workingDir, id: randomId(), input: '' },
+    });
+  };
 
   useEffect(() => {
     if (cards.length === 0) addEmptyCard();
   }, [cards.length]);
 
-  const addEmptyCard = async () => {
-    addCard({
-      workingDir: await getWorkingDirectory(),
-    });
-  };
-
-  const addCard = (props: CardPropTypes) => {
-    setCards((cards) => [...cards, { id: cards.length, ...props }]);
-  };
-
-  const addToHistory = (input?: string) => {
-    if (!input) return;
-    if (history.indexOf(input) === -1) {
-      setHistory((history) => [...history, input]);
-    }
-  };
-
-  const removeCard = (cardId: number) => {
-    setCards((cards) => cards.filter(({ id }) => id !== cardId));
-  };
-
-  const updateCard = (cardId: number, props: CardPropTypes) => {
-    return setCards((cards) =>
-      cards.map((orig) => {
-        if (orig.id === cardId) {
-          return { ...orig, ...props };
-        }
-        return orig;
-      })
-    );
-  };
-
-  const handleSubmit = async (
-    cardId: number,
+  const handleSubmit = (
+    cardId: string,
     props: CardPropTypes,
     isError: boolean
   ) => {
-    const card = cards.find(({ id }) => id === cardId);
-    const alreadySubmitted = card && card.input !== undefined;
-    updateCard(cardId, props);
-    if (!isError && !alreadySubmitted) addEmptyCard();
+    const cardIndex = cards.findIndex(({ id }) => id === cardId);
+    const isLast = cardIndex === cards.length;
 
-    addToHistory(props.input);
+    dispatchCards({ type: 'update', cardId, props });
+    if (!isLast) addEmptyCard();
+
+    dispatchHistory({ type: 'push', input: props.input });
   };
 
   return (
@@ -64,11 +90,14 @@ export default () => {
           {...card}
           history={history}
           onClose={() => {
-            removeCard(card.id);
+            dispatchCards({ type: 'remove', cardId: card.id });
           }}
           onSubmit={(props: CardPropTypes, isError) => {
             handleSubmit(card.id, props, isError);
           }}
+          onInputChange={(input) =>
+            dispatchCards({ type: 'update', cardId: card.id, props: { input } })
+          }
         />
       ))}
     </main>
