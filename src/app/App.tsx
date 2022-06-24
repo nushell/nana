@@ -1,51 +1,67 @@
-import { nanoid } from 'nanoid';
-import { useCallback, useEffect } from 'react';
-import { useStateDispatch } from 'use-state-dispatch';
+import { useCallback, useEffect, useReducer } from 'react';
 import { getWorkingDirectory } from '../support/nana';
+import { randomId } from '../support/randomId';
 import { Card, CardPropTypes, ICard } from './Card';
 
 type HistoryState = string[];
 
-const historyReducers = {
-  push(state: HistoryState, input: string): HistoryState {
-    return [...state, input];
-  },
+type HistoryAction = {
+  type: 'push';
+  input: string;
 };
 
-type CardState = ICard[];
+const historyReducer = (state: HistoryState, action: HistoryAction) => {
+  switch (action.type) {
+    case 'push':
+      return [...state, action.input];
+  }
+};
 
-const cardReducers = {
-  add(state: CardState, card: ICard) {
-    return [...state, card];
-  },
+type CardsState = ICard[];
 
-  remove(state: CardState, cardId: string) {
-    return state.filter((card) => card.id === cardId);
-  },
+type CardsAction =
+  | {
+      type: 'add';
+      card: ICard;
+    }
+  | {
+      type: 'remove';
+      cardId: string;
+    }
+  | {
+      // TODO: break this action into multiple, more explicit, actions
+      type: 'update';
+      cardId: string;
+      props: Partial<CardPropTypes>;
+    };
 
-  // TODO: break this function into multiple
-  update(state: CardState, cardId: string, props: Partial<CardPropTypes>) {
-    return state.map((orig) => {
-      if (orig.id === cardId) {
-        return { ...orig, ...props };
-      }
-      return orig;
-    });
-  },
+const cardsReducer = (state: CardsState, action: CardsAction) => {
+  switch (action.type) {
+    case 'add':
+      return [...state, action.card];
+    case 'remove':
+      return state.filter((card) => card.id === action.cardId);
+    case 'update':
+      return state.map((orig) => {
+        if (orig.id === action.cardId) {
+          return { ...orig, ...action.props };
+        }
+        return orig;
+      });
+  }
 };
 
 export const App = () => {
-  const [history, dispatchHistory] = useStateDispatch(
-    [] as HistoryState,
-    historyReducers
-  );
-
-  const [cards, dispatchCards] = useStateDispatch([] as ICard[], cardReducers);
+  const [history, dispatchHistory] = useReducer(historyReducer, []);
+  const [cards, dispatchCards] = useReducer(cardsReducer, []);
 
   const addEmptyCard = useCallback(async () => {
     const workingDir = await getWorkingDirectory();
 
-    dispatchCards.add({ workingDir, id: nanoid(), input: '' });
+    dispatchCards({
+      type: 'add',
+      card: { workingDir, id: randomId(), input: '' },
+    });
   }, []);
 
   useEffect(() => {
@@ -59,10 +75,11 @@ export const App = () => {
   ) => {
     const cardIndex = cards.findIndex(({ id }) => id === cardId);
     const isLast = cardIndex === cards.length;
-    dispatchCards.update(cardId, props);
+
+    dispatchCards({ type: 'update', cardId, props });
     if (!isLast) addEmptyCard();
 
-    dispatchHistory.push(props.input);
+    dispatchHistory({ type: 'push', input: props.input });
   };
 
   return (
@@ -73,12 +90,14 @@ export const App = () => {
           {...card}
           history={history}
           onClose={() => {
-            dispatchCards.remove(card.id);
+            dispatchCards({ type: 'remove', cardId: card.id });
           }}
           onSubmit={(props: CardPropTypes, isError) => {
             handleSubmit(card.id, props, isError);
           }}
-          onInputChange={(input) => dispatchCards.update(card.id, { input })}
+          onInputChange={(input) =>
+            dispatchCards({ type: 'update', cardId: card.id, props: { input } })
+          }
         />
       ))}
     </main>
