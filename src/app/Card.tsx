@@ -43,26 +43,17 @@ export const Card = (
   useEffect(resetActiveHistoryIndex, [history.length]);
 
   const handleSubmit = async () => {
+    const workingDir = await getWorkingDirectory();
+    let isError = false;
+    let output: string;
     try {
-      onSubmit(
-        {
-          input,
-          workingDir: await getWorkingDirectory(),
-          output: JSON.parse(await simpleCommandWithResult(id, input)),
-        },
-        false
-      );
+      output = JSON.parse(await simpleCommandWithResult(id, input));
     } catch (error) {
-      onSubmit(
-        {
-          input,
-          workingDir: await getWorkingDirectory(),
-          output: ansiFormat(error as string),
-        },
-        true
-      );
+        output = ansiFormat(error as string);
+        isError = true
     }
 
+    onSubmit({input, workingDir, output}, isError);
     resetActiveHistoryIndex();
   };
 
