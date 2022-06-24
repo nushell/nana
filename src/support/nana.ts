@@ -1,8 +1,9 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { ICompletion } from '../app/Prompt';
 
-export function simpleCommandWithResult(argument: string): Promise<string> {
+export function simpleCommandWithResult(cardId: string, argument: string): Promise<string> {
   return invoke('simple_command_with_result', {
+    cardId: cardId,
     argument: argument,
   });
 }
@@ -22,4 +23,8 @@ export function complete({
 
 export function getWorkingDirectory(): Promise<string> {
   return invoke('get_working_directory');
+}
+
+export function dropFromCache(cardId: string): Promise<void> {
+  return invoke('drop_card_from_cache', { cardId } );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { getWorkingDirectory } from '../support/nana';
+import { dropFromCache, getWorkingDirectory } from '../support/nana';
 import { randomId } from '../support/randomId';
 import { Card, CardPropTypes, ICard } from './Card';
 
@@ -40,7 +40,7 @@ const cardsReducer = (state: CardsState, action: CardsAction) => {
     case 'add':
       return [...state, action.card];
     case 'remove':
-      return state.filter((card) => card.id === action.cardId);
+      return state.filter((card) => card.id !== action.cardId);
     case 'update':
       return state.map((orig) => {
         if (orig.id === action.cardId) {
@@ -91,6 +91,7 @@ export const App = () => {
           history={history}
           onClose={() => {
             dispatchCards({ type: 'remove', cardId: card.id });
+            dropFromCache(card.id);
           }}
           onSubmit={(props: CardPropTypes, isError) => {
             handleSubmit(card.id, props, isError);
