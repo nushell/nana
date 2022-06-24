@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { ansiFormat } from '../support/formatting';
-import { getWorkingDirectory } from '../support/nana';
+import { getWorkingDirectory, simpleCommandWithResult } from '../support/nana';
 import { Output } from './Output';
 import { Prompt } from './Prompt';
 
@@ -24,6 +24,7 @@ export const Card = (
   }
 ) => {
   const {
+    id,
     input,
     workingDir,
     history,
@@ -41,27 +42,19 @@ export const Card = (
 
   useEffect(resetActiveHistoryIndex, [history.length]);
 
-  const handleSubmit = async (out: string) => {
-    onSubmit(
-      {
-        input,
-        workingDir: await getWorkingDirectory(),
-        output: JSON.parse(out),
-      },
-      false
-    );
-    resetActiveHistoryIndex();
-  };
+  const handleSubmit = async () => {
+    const workingDir = await getWorkingDirectory();
+    let isError = false;
+    let output: string;
+    try {
+      output = JSON.parse(await simpleCommandWithResult(id, input));
+    } catch (error) {
+        output = ansiFormat(error as string);
+        isError = true
+    }
 
-  const handleError = async (output: string) => {
-    onSubmit(
-      {
-        input,
-        workingDir: await getWorkingDirectory(),
-        output: ansiFormat(output),
-      },
-      true
-    );
+    onSubmit({input, workingDir, output}, isError);
+    resetActiveHistoryIndex();
   };
 
   const handleHistory = (delta: number) => {
@@ -90,7 +83,6 @@ export const Card = (
           <Prompt
             input={input ?? ''}
             onSubmit={handleSubmit}
-            onSubmitError={handleError}
             onHistoryUp={() => {
               handleHistory(-1);
             }}

@@ -1,5 +1,5 @@
 import { KeyboardEvent, useRef } from 'react';
-import { complete, simpleCommandWithResult } from '../support/nana';
+import { complete } from '../support/nana';
 
 export type ICompletion = {
   completion: string;
@@ -9,8 +9,7 @@ export type ICompletion = {
 type PromptPropType = {
   input: string;
   onInputChange: (input: string) => void;
-  onSubmit: (output: string) => void;
-  onSubmitError: (output: string) => void;
+  onSubmit: () => void;
   onHistoryUp: () => void;
   onHistoryDown: () => void;
 };
@@ -19,7 +18,6 @@ export const Prompt = ({
   input,
   onInputChange,
   onSubmit,
-  onSubmitError,
   onHistoryUp,
   onHistoryDown,
 }: PromptPropType) => {
@@ -46,12 +44,7 @@ export const Prompt = ({
 
   const handleSubmit = async () => {
     if (input.length > 0) {
-      try {
-        onSubmit(await simpleCommandWithResult(input));
-      } catch (err) {
-        onSubmitError(err as string);
-      } finally {
-      }
+        onSubmit();
     }
   };
 

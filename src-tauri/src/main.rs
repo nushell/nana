@@ -13,7 +13,7 @@ use nu_protocol::{
 use parking_lot::Mutex;
 use reedline::Completer;
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 use tauri::{command, Manager, State};
 
 #[cfg(target_os = "macos")]
@@ -22,6 +22,7 @@ use tauri::{Menu, MenuItem, Submenu};
 pub struct NanaState {
     engine_state: Mutex<EngineState>,
     stack: Mutex<Stack>,
+    card_cache: Mutex<HashMap<String, Value>>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -58,6 +59,7 @@ fn main() {
     gather_parent_env_vars(&mut engine_state, &std::env::current_dir().unwrap());
 
     let stack = Stack::new();
+    let card_cache = HashMap::<String, nu_protocol::Value>::new();
 
     #[cfg(target_os = "macos")]
     {
@@ -65,12 +67,14 @@ fn main() {
             .manage(NanaState {
                 engine_state: Mutex::new(engine_state),
                 stack: Mutex::new(stack),
+                card_cache: Mutex::new(card_cache),
             })
             .invoke_handler(tauri::generate_handler![
                 simple_command_with_result,
                 get_working_directory,
                 complete,
                 color_file_name_with_lscolors,
+                drop_card_from_cache,
             ])
             // Menus are required to make the keyboard shortcuts work
             .menu(
@@ -107,12 +111,14 @@ fn main() {
             .manage(NanaState {
                 engine_state: Mutex::new(engine_state),
                 stack: Mutex::new(stack),
+                card_cache: Mutex::new(card_cache),
             })
             .invoke_handler(tauri::generate_handler![
                 simple_command_with_result,
                 get_working_directory,
                 complete,
-                color_file_name_with_lscolors
+                color_file_name_with_lscolors,
+                drop_card_from_cache,
             ])
             .setup(|app| {
                 if let Some(main_window) = app.get_window("main") {
@@ -158,7 +164,11 @@ fn try_set_titlebar_colors(_window: &tauri::Window) {
 }
 
 #[command]
-fn simple_command_with_result(argument: String, state: State<NanaState>) -> Result<String, String> {
+fn simple_command_with_result(
+    card_id: String,
+    argument: String,
+    state: State<NanaState>,
+) -> Result<String, String> {
     let mut engine_state = state.engine_state.lock();
     let mut stack = state.stack.lock();
     let result = nushell::eval_nushell(
@@ -170,6 +180,11 @@ fn simple_command_with_result(argument: String, state: State<NanaState>) -> Resu
     );
 
     let result = result.map(|x| x.into_value(Span { start: 0, end: 0 }));
+
+    if let Ok(result) = &result {
+        let mut card_cache = state.card_cache.lock();
+        card_cache.insert(card_id, result.clone());
+    }
 
     match result {
         Ok(Value::Error { error: e }) => {
@@ -195,6 +210,12 @@ fn simple_command_with_result(argument: String, state: State<NanaState>) -> Resu
             Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
         }
     }
+}
+
+#[command]
+fn drop_card_from_cache(card_id: String, state: State<NanaState>) {
+    let mut card_cache = state.card_cache.lock();
+    card_cache.remove(&card_id);
 }
 
 #[command]
