@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { getWorkingDirectory } from '../support/nana';
 import { randomId } from '../support/randomId';
 import { Card, CardPropTypes, ICard } from './Card';
@@ -55,14 +55,14 @@ export const App = () => {
   const [history, dispatchHistory] = useReducer(historyReducer, []);
   const [cards, dispatchCards] = useReducer(cardsReducer, []);
 
-  const addEmptyCard = useCallback(async () => {
+  const addEmptyCard = async () => {
     const workingDir = await getWorkingDirectory();
 
     dispatchCards({
       type: 'add',
       card: { workingDir, id: randomId(), input: '' },
     });
-  }, []);
+  };
 
   useEffect(() => {
     if (cards.length === 0) addEmptyCard();
