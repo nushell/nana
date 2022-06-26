@@ -74,10 +74,10 @@ export const App = () => {
     isError: boolean
   ) => {
     const cardIndex = cards.findIndex(({ id }) => id === cardId);
-    const isLast = cardIndex === cards.length;
+    const isLast = cardIndex === cards.length - 1;
 
     dispatchCards({ type: 'update', cardId, props });
-    if (!isLast) addEmptyCard();
+    if (isLast) addEmptyCard();
 
     dispatchHistory({ type: 'push', input: props.input });
   };
