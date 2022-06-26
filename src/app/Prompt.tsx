@@ -44,7 +44,7 @@ export const Prompt = ({
 
   const handleSubmit = async () => {
     if (input.length > 0) {
-        onSubmit();
+      onSubmit();
     }
   };
 

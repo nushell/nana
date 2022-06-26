@@ -49,11 +49,11 @@ export const Card = (
     try {
       output = JSON.parse(await simpleCommandWithResult(id, input));
     } catch (error) {
-        output = ansiFormat(error as string);
-        isError = true
+      output = ansiFormat(error as string);
+      isError = true;
     }
 
-    onSubmit({input, workingDir, output}, isError);
+    onSubmit({ input, workingDir, output }, isError);
     resetActiveHistoryIndex();
   };
 
