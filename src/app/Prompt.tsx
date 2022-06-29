@@ -150,7 +150,6 @@ export const Prompt = forwardRef<HTMLDivElement, PromptPropType>(
     const hasTopCleareance = () => {
       if (inputRef.current) {
         const rect = inputRef.current.getBoundingClientRect();
-        console.log('rect = ', rect);
         return rect.top >= 500;
       } else {
         return false;
