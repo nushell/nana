@@ -1,8 +1,14 @@
+import { useEffect, useState } from 'react';
 import {
   humanDuration,
   humanFileSize,
   UInt8ArrayToString,
 } from '../support/formatting';
+
+export type SortingOptionsType = {
+  column: string | null;
+  ascending: boolean;
+};
 
 const Image = ({ value, type }: { value: any; type: string }) => (
   <img
@@ -64,16 +70,43 @@ const Record = ({ value: { cols, vals } }: { value: any }) => (
   </table>
 );
 
-const List = ({ value: { vals } }: { value: any }): any => {
+const List = ({
+  value: { vals },
+  onSortBy,
+}: {
+  value: any;
+  onSortBy?: (sortingOptions: SortingOptionsType) => void;
+}): any => {
   if (vals.length > 0) {
     const isRecordList = vals.every((v: any) => v.Record);
     const cols = isRecordList ? vals[0].Record.cols : [];
+    const [sortingOptions, setSortingOptions] = useState<SortingOptionsType>({
+      column: null,
+      ascending: true,
+    });
+    useEffect(() => {
+      onSortBy && onSortBy(sortingOptions);
+    }, [sortingOptions]);
+
     return (
       <table className="styled-table">
         <tbody>
           <tr>
             {cols.map((col: string, i: number) => (
-              <th key={i}>{col}</th>
+              <th
+                key={i}
+                className="cursor-pointer"
+                onClick={() =>
+                  setSortingOptions(
+                    ({ column: sortedColumn, ascending: wasAscending }) => ({
+                      column: col,
+                      ascending: col === sortedColumn ? !wasAscending : true,
+                    })
+                  )
+                }
+              >
+                {col}
+              </th>
             ))}
           </tr>
           {vals.map((value: any, i: number) => (
@@ -99,7 +132,13 @@ const List = ({ value: { vals } }: { value: any }): any => {
   return [];
 };
 
-export const Output = ({ value }: { value: any }): any => {
+export const Output = ({
+  value,
+  onSortOuput,
+}: {
+  value: any;
+  onSortOuput?: (sortingOptions: SortingOptionsType) => void;
+}): any => {
   if (!value || value.Nothing) {
     return null;
   } else if (value.Int) {
@@ -121,7 +160,14 @@ export const Output = ({ value }: { value: any }): any => {
   } else if (value.Record) {
     return <Record value={value.Record} />;
   } else if (value.List) {
-    return <List value={value.List}></List>;
+    return (
+      <List
+        value={value.List}
+        onSortBy={(sortingOptions) =>
+          onSortOuput && onSortOuput(sortingOptions)
+        }
+      />
+    );
   }
 
   // todo: use rehype-sanitize

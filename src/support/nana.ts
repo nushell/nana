@@ -31,3 +31,11 @@ export function getWorkingDirectory(): Promise<string> {
 export function dropFromCache(cardId: string): Promise<void> {
   return invoke('drop_card_from_cache', { cardId });
 }
+
+export function sortCardOutput(
+  cardId: string,
+  sortColumn: string,
+  ascending = true
+): Promise<string> {
+  return invoke('sort_card', { cardId, sortColumn, ascending });
+}
