@@ -12,13 +12,13 @@ rust-version = "1.57"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.0.0-rc.12", features = [] }
+tauri-build = { version = "1.0", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 # enable devtools even in release mode; makes things easier for devs and we don't have a good reason to disable it
-tauri = { version = "1.0.0", features = ["api-all", "devtools"] }
+tauri = { version = "1.0", features = ["api-all", "devtools"] }
 nu-engine = { git = "https://github.com/nushell/nushell", branch = "main" }
 nu-protocol = { git = "https://github.com/nushell/nushell", branch = "main" }
 nu-parser = { git = "https://github.com/nushell/nushell", branch = "main" }
@@ -26,9 +26,9 @@ nu-path = { git = "https://github.com/nushell/nushell", branch = "main" }
 nu-command = { git = "https://github.com/nushell/nushell", branch = "main" }
 nu-cli = { git = "https://github.com/nushell/nushell", branch = "main" }
 reedline = { version = "0.7.0", features = ["bashisms", "sqlite"] }
-parking_lot = "0.12.0"
+parking_lot = "0.12.1"
 strip-ansi-escapes = "0.1.1"
-regex = "1.5.5"
+regex = "1.5.6"
 pathdiff = "0.2.1"
 itertools = "0.10.3"
 lscolors = "0.10.0"
