@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { ansiFormat } from '../support/formatting';
-import { getWorkingDirectory, simpleCommandWithResult } from '../support/nana';
-import { Output } from './Output';
+import {
+  getWorkingDirectory,
+  simpleCommandWithResult,
+  sortCardOutput,
+} from '../support/nana';
+import { Output, SortingOptionsType } from './Output';
 import { Prompt } from './Prompt';
 
 export type CardPropTypes = {
@@ -57,6 +61,23 @@ export const Card = (
     resetActiveHistoryIndex();
   };
 
+  const handleSortBy = async (sortingOptions: SortingOptionsType) => {
+    const { column, ascending } = sortingOptions;
+    if (!column) return;
+
+    const workingDir = await getWorkingDirectory();
+    let isError = false;
+    let output: string;
+    try {
+      output = JSON.parse(await sortCardOutput(id, column, ascending));
+    } catch (error) {
+      output = ansiFormat(error as string);
+      isError = true;
+    }
+
+    onSubmit({ input, workingDir, output }, isError);
+  };
+
   const handleHistory = (delta: number) => {
     const index = activeHistoryIndex + delta;
     if (index >= 0 && index < history.length) {
@@ -95,7 +116,10 @@ export const Card = (
 
         {output !== undefined && (
           <div className="mt-2 rounded-sm border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02">
-            <Output value={output} />
+            <Output
+              value={output}
+              onSortOutput={(sortingOptions) => handleSortBy(sortingOptions)}
+            />
           </div>
         )}
       </div>

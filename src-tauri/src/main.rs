@@ -5,6 +5,7 @@
 
 use lscolors::{LsColors, Style};
 use nu_cli::{gather_parent_env_vars, NuCompleter};
+use nu_command::sort_value;
 use nu_engine::env_to_string;
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
@@ -75,6 +76,7 @@ fn main() {
                 complete,
                 color_file_name_with_lscolors,
                 drop_card_from_cache,
+                sort_card,
             ])
             // Menus are required to make the keyboard shortcuts work
             .menu(
@@ -119,6 +121,7 @@ fn main() {
                 complete,
                 color_file_name_with_lscolors,
                 drop_card_from_cache,
+                sort_card,
             ])
             .setup(|app| {
                 if let Some(main_window) = app.get_window("main") {
@@ -216,6 +219,51 @@ fn simple_command_with_result(
 fn drop_card_from_cache(card_id: String, state: State<NanaState>) {
     let mut card_cache = state.card_cache.lock();
     card_cache.remove(&card_id);
+}
+
+#[command]
+fn sort_card(
+    card_id: String,
+    sort_column: String,
+    ascending: bool,
+    state: State<NanaState>,
+) -> Result<String, String> {
+    let card_cache = state.card_cache.lock();
+    let card_result = card_cache.get(&card_id);
+
+    match card_result {
+        Some(value) => {
+            let sort_result = sort_value(&value, vec![sort_column], ascending, false, false);
+
+            let engine_state = state.engine_state.lock();
+
+            match sort_result {
+                Ok(Value::Error { error: e }) => {
+                    let working_set = StateWorkingSet::new(&engine_state);
+
+                    let error_msg = format!("{:?}", CliError(&e, &working_set));
+
+                    Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
+                }
+                Ok(value) => {
+                    let output = serde_json::to_string(&value);
+
+                    match output {
+                        Ok(s) => Ok(s),
+                        Err(e) => Ok(format!("\"{}\"", e)),
+                    }
+                }
+                Err(e) => {
+                    let working_set = StateWorkingSet::new(&engine_state);
+
+                    let error_msg = format!("{:?}", CliError(&e, &working_set));
+
+                    Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
+                }
+            }
+        }
+        None => Err("No card found in cache for given card id".to_string()),
+    }
 }
 
 #[command]
