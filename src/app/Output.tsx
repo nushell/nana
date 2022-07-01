@@ -134,10 +134,10 @@ const List = ({
 
 export const Output = ({
   value,
-  onSortOuput,
+  onSortOutput,
 }: {
   value: any;
-  onSortOuput?: (sortingOptions: SortingOptionsType) => void;
+  onSortOutput?: (sortingOptions: SortingOptionsType) => void;
 }): any => {
   if (!value || value.Nothing) {
     return null;
@@ -164,7 +164,7 @@ export const Output = ({
       <List
         value={value.List}
         onSortBy={(sortingOptions) =>
-          onSortOuput && onSortOuput(sortingOptions)
+          onSortOutput && onSortOutput(sortingOptions)
         }
       />
     );

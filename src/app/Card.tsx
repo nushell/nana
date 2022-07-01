@@ -118,7 +118,7 @@ export const Card = (
           <div className="mt-2 rounded-sm border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02">
             <Output
               value={output}
-              onSortOuput={(sortingOptions) => handleSortBy(sortingOptions)}
+              onSortOutput={(sortingOptions) => handleSortBy(sortingOptions)}
             />
           </div>
         )}

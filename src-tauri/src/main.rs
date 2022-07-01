@@ -5,13 +5,11 @@
 
 use lscolors::{LsColors, Style};
 use nu_cli::{gather_parent_env_vars, NuCompleter};
+use nu_command::sort_value;
 use nu_engine::env_to_string;
 use nu_protocol::{
     engine::{EngineState, Stack, StateWorkingSet},
     CliError, PipelineData, ShellError, Span, Value,
-};
-use nu_command::{
-    sort_value
 };
 use parking_lot::Mutex;
 use reedline::Completer;
@@ -224,8 +222,12 @@ fn drop_card_from_cache(card_id: String, state: State<NanaState>) {
 }
 
 #[command]
-fn sort_card(card_id: String, sort_column: String, ascending: bool, state: State<NanaState>) -> Result<String, String> {
-    
+fn sort_card(
+    card_id: String,
+    sort_column: String,
+    ascending: bool,
+    state: State<NanaState>,
+) -> Result<String, String> {
     let card_cache = state.card_cache.lock();
     let card_result = card_cache.get(&card_id);
 
@@ -238,14 +240,14 @@ fn sort_card(card_id: String, sort_column: String, ascending: bool, state: State
             match sort_result {
                 Ok(Value::Error { error: e }) => {
                     let working_set = StateWorkingSet::new(&engine_state);
-        
+
                     let error_msg = format!("{:?}", CliError(&e, &working_set));
-        
+
                     Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
                 }
                 Ok(value) => {
                     let output = serde_json::to_string(&value);
-        
+
                     match output {
                         Ok(s) => Ok(s),
                         Err(e) => Ok(format!("\"{}\"", e)),
@@ -253,16 +255,14 @@ fn sort_card(card_id: String, sort_column: String, ascending: bool, state: State
                 }
                 Err(e) => {
                     let working_set = StateWorkingSet::new(&engine_state);
-        
+
                     let error_msg = format!("{:?}", CliError(&e, &working_set));
-        
+
                     Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
                 }
             }
         }
-        None => {
-            Err("No card found in cache for given card id".to_string())
-        }
+        None => Err("No card found in cache for given card id".to_string()),
     }
 }
 
