@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FaLongArrowAltDown, FaLongArrowAltUp } from 'react-icons/fa';
 import {
   humanDuration,
   humanFileSize,
@@ -105,7 +106,15 @@ const List = ({
                   )
                 }
               >
-                {col}
+                <div className="relative">
+                  <span>{col}</span>
+                  {sortingOptions.column === col &&
+                    (sortingOptions.ascending ? (
+                      <FaLongArrowAltUp className="absolute top-0 bottom-0 right-0 my-auto self-center" />
+                    ) : (
+                      <FaLongArrowAltDown className="absolute top-0 bottom-0 right-0 my-auto self-center" />
+                    ))}
+                </div>
               </th>
             ))}
           </tr>
