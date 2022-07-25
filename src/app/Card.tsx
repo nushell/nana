@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaCopy, FaTimes } from 'react-icons/fa';
 import { ansiFormat } from '../support/formatting';
 import {
+  copyCardToClipboard,
   getWorkingDirectory,
+  saveCard,
   simpleCommandWithResult,
   sortCardOutput,
 } from '../support/nana';
@@ -88,17 +90,31 @@ export const Card = (
 
   return (
     <div className="mb-2 flex flex-col">
-      <div className="mr-4 w-fit translate-y-1 self-end rounded-t bg-solarized-blue px-2 font-mono text-sm text-solarized-base2 dark:bg-solarized-base01">
-        <span>{workingDir}</span>
-        &nbsp;
-        <span onClick={onClose}>
-          <FaTimes className="inline cursor-pointer text-sm text-solarized-base3 hover:text-solarized-red dark:text-solarized-base03" />
-        </span>
+      <div
+        id="card-header"
+        className="flex w-full items-center justify-between rounded-t bg-solarized-blue px-2 py-1 font-mono text-sm text-solarized-base2 dark:bg-solarized-base01"
+      >
+        <div id="left-buttons" className="flex">
+          {output && (
+            <FaCopy
+              className="group ml-1 cursor-pointer text-xs hover:text-green-300"
+              title="Copy results to clipboard (as tab-separated values)"
+              onClick={async () => {
+                await copyCardToClipboard(id);
+              }}
+            />
+          )}
+        </div>
+        <div>{workingDir}</div>
+        <FaTimes
+          className="cursor-pointer text-solarized-base3 hover:text-solarized-red dark:text-solarized-base03"
+          onClick={onClose}
+        />
       </div>
 
       <div
         id="card-body"
-        className="rounded bg-solarized-blue px-2 pb-2 pt-2 dark:bg-solarized-base01"
+        className="rounded-b bg-solarized-blue px-2 pb-2 dark:bg-solarized-base01"
       >
         <div id="header" className="flex">
           <Prompt
@@ -115,7 +131,7 @@ export const Card = (
         </div>
 
         {output !== undefined && (
-          <div className="mt-2 rounded-sm border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02">
+          <div className="mt-2 border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02">
             <Output
               value={output}
               onSortOutput={(sortingOptions) => handleSortBy(sortingOptions)}
