@@ -15,10 +15,12 @@ use parking_lot::Mutex;
 use reedline::Completer;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Arc};
-use tauri::{command, Manager, State};
+use tauri::{command, ClipboardManager, Manager, State};
 
 #[cfg(target_os = "macos")]
 use tauri::{Menu, MenuItem, Submenu};
+
+use crate::nushell::simple_eval;
 
 pub struct NanaState {
     engine_state: Mutex<EngineState>,
@@ -77,6 +79,7 @@ fn main() {
                 color_file_name_with_lscolors,
                 drop_card_from_cache,
                 sort_card,
+                copy_card_to_clipboard,
             ])
             // Menus are required to make the keyboard shortcuts work
             .menu(
@@ -122,6 +125,7 @@ fn main() {
                 color_file_name_with_lscolors,
                 drop_card_from_cache,
                 sort_card,
+                copy_card_to_clipboard,
             ])
             .setup(|app| {
                 if let Some(main_window) = app.get_window("main") {
@@ -174,6 +178,7 @@ fn simple_command_with_result(
 ) -> Result<String, String> {
     let mut engine_state = state.engine_state.lock();
     let mut stack = state.stack.lock();
+
     let result = nushell::eval_nushell(
         &mut engine_state,
         &mut stack,
@@ -219,6 +224,43 @@ fn simple_command_with_result(
 fn drop_card_from_cache(card_id: String, state: State<NanaState>) {
     let mut card_cache = state.card_cache.lock();
     card_cache.remove(&card_id);
+}
+
+#[command]
+fn copy_card_to_clipboard(
+    card_id: String,
+    app_handle: tauri::AppHandle,
+    state: State<NanaState>,
+) -> Result<(), String> {
+    let mut engine_state = state.engine_state.lock();
+    let mut stack = state.stack.lock();
+    let card_cache = state.card_cache.lock();
+
+    if let Some(card_result) = card_cache.get(&card_id) {
+        let card_result = card_result.clone();
+        // We use tab-separated values b/c they work nicely when pasted into Excel.
+        // TODO: support more formats, let user pick somehow
+        let card_result_as_tsv = simple_eval(
+            &mut engine_state,
+            &mut stack,
+            Some(card_result),
+            r#"to csv --separator '\t'"#,
+        );
+
+        match card_result_as_tsv {
+            Ok(value) => match value {
+                Value::String { val, .. } => {
+                    let _ = app_handle.clipboard_manager().write_text(val);
+                }
+                _ => return Err("Nu engine returned unexpected non-string type".to_string()),
+            },
+            Err(e) => return Err(format!("Unexpected error when formatting results: {e}")),
+        }
+    } else {
+        return Err("No card results found".to_string());
+    }
+
+    Ok(())
 }
 
 #[command]
