@@ -1,6 +1,8 @@
-# Project "nana"
+# Project "Nana"
 
-Experimental GUI version of Nushell
+An experimental GUI version of Nushell:
+
+![image](https://user-images.githubusercontent.com/26268125/188325453-aafe7397-6773-4821-ba28-561f21703d8a.png)
 
 ## Getting started
 
