@@ -64,78 +64,34 @@ fn main() {
     let stack = Stack::new();
     let card_cache = HashMap::<String, nu_protocol::Value>::new();
 
-    #[cfg(target_os = "macos")]
-    {
-        tauri::Builder::default()
-            .manage(NanaState {
-                engine_state: Mutex::new(engine_state),
-                stack: Mutex::new(stack),
-                card_cache: Mutex::new(card_cache),
-            })
-            .invoke_handler(tauri::generate_handler![
-                simple_command_with_result,
-                get_working_directory,
-                complete,
-                color_file_name_with_lscolors,
-                drop_card_from_cache,
-                sort_card,
-                copy_card_to_clipboard,
-            ])
-            // Menus are required to make the keyboard shortcuts work
-            .menu(
-                Menu::new()
-                    .add_submenu(Submenu::new(
-                        "Nushell",
-                        Menu::new()
-                            .add_native_item(MenuItem::EnterFullScreen)
-                            .add_native_item(MenuItem::Quit),
-                    ))
-                    .add_submenu(Submenu::new(
-                        "Edit",
-                        Menu::new()
-                            .add_native_item(MenuItem::Copy)
-                            .add_native_item(MenuItem::Paste)
-                            .add_native_item(MenuItem::Cut)
-                            .add_native_item(MenuItem::Undo)
-                            .add_native_item(MenuItem::Redo)
-                            .add_native_item(MenuItem::SelectAll),
-                    )),
-            )
-            .setup(|app| {
-                if let Some(main_window) = app.get_window("main") {
-                    try_set_titlebar_colors(&main_window);
-                }
-                Ok(())
-            })
-            .run(tauri::generate_context!())
-            .expect("error while running tauri application");
-    }
-    #[cfg(not(target_os = "macos"))]
-    {
-        tauri::Builder::default()
-            .manage(NanaState {
-                engine_state: Mutex::new(engine_state),
-                stack: Mutex::new(stack),
-                card_cache: Mutex::new(card_cache),
-            })
-            .invoke_handler(tauri::generate_handler![
-                simple_command_with_result,
-                get_working_directory,
-                complete,
-                color_file_name_with_lscolors,
-                drop_card_from_cache,
-                sort_card,
-                copy_card_to_clipboard,
-            ])
-            .setup(|app| {
-                if let Some(main_window) = app.get_window("main") {
-                    try_set_titlebar_colors(&main_window);
-                }
-                Ok(())
-            })
-            .run(tauri::generate_context!())
-            .expect("error while running tauri application");
-    }
+    tauri::Builder::default()
+        .manage(NanaState {
+            engine_state: Mutex::new(engine_state),
+            stack: Mutex::new(stack),
+            card_cache: Mutex::new(card_cache),
+        })
+        .invoke_handler(tauri::generate_handler![
+            simple_command_with_result,
+            get_working_directory,
+            complete,
+            color_file_name_with_lscolors,
+            drop_card_from_cache,
+            sort_card,
+            copy_card_to_clipboard,
+        ])
+        .setup(|app| {
+            if let Some(main_window) = app.get_window("main") {
+                try_set_titlebar_colors(&main_window);
+            }
+
+            let id = app.listen_global("ThemeChanged", |event| {
+                println!("got ThemeChanged with payload {:?}", event.payload());
+            });
+
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
 
 // Set the colors of the titlebar to match the current light/dark theme
