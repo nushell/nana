@@ -83,11 +83,6 @@ fn main() {
             if let Some(main_window) = app.get_window("main") {
                 try_set_titlebar_colors(&main_window);
             }
-
-            let id = app.listen_global("ThemeChanged", |event| {
-                println!("got ThemeChanged with payload {:?}", event.payload());
-            });
-
             Ok(())
         })
         .run(tauri::generate_context!())
