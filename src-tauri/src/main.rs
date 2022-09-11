@@ -76,6 +76,7 @@ fn main() {
             complete,
             color_file_name_with_lscolors,
             drop_card_from_cache,
+            save_card,
             sort_card,
             copy_card_to_clipboard,
         ])
@@ -215,6 +216,34 @@ fn copy_card_to_clipboard(
 }
 
 #[command]
+fn save_card(
+    card_id: String,
+    format: String,
+    file_path: String,
+    state: State<NanaState>,
+) -> Result<(), String> {
+    let mut engine_state = state.engine_state.lock();
+    let mut stack = state.stack.lock();
+    let card_cache = state.card_cache.lock();
+
+    if let Some(card_contents) = card_cache.get(&card_id) {
+        let save_result = simple_eval(
+            &mut engine_state,
+            &mut stack,
+            Some(card_contents.clone()),
+            &format!("to {format} | save --raw '{file_path}'"),
+        );
+
+        match save_result {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Unexpected error when saving card: {e}")),
+        }
+    } else {
+        Err("No card results found".to_string())
+    }
+}
+
+#[command]
 fn sort_card(
     card_id: String,
     sort_column: String,
@@ -226,7 +255,7 @@ fn sort_card(
 
     match card_result {
         Some(value) => {
-            let sort_result = sort_value(&value, vec![sort_column], ascending, false, false);
+            let sort_result = sort_value(value, vec![sort_column], ascending, false, false);
 
             let engine_state = state.engine_state.lock();
 
