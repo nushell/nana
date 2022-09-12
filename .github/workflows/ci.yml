@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+env:
+  RUSTFLAGS: -Dwarnings
+
 jobs:
   fmt-clippy:
     strategy:
