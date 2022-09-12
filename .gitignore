@@ -1,9 +1,6 @@
 # built with npm install
 node_modules/
 
-# built each time
-dist/
-
 # rust's target folders
 target/
 src-tauri/WixTools/
