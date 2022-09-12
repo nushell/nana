@@ -17,9 +17,6 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Arc};
 use tauri::{command, ClipboardManager, Manager, State};
 
-#[cfg(target_os = "macos")]
-use tauri::{Menu, MenuItem, Submenu};
-
 use crate::nushell::simple_eval;
 
 pub struct NanaState {
