@@ -43,3 +43,11 @@ export function sortCardOutput(
 export function copyCardToClipboard(cardId: string): Promise<void> {
   return invoke('copy_card_to_clipboard', { cardId });
 }
+
+export function saveCardToFile(
+  cardId: string,
+  format: string,
+  filePath: string
+): Promise<void> {
+  return invoke('save_card', { cardId, format, filePath });
+}
