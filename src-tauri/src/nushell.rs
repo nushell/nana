@@ -24,10 +24,7 @@ pub fn eval_nushell(
     };
 
     let cwd = nu_engine::env::current_dir_str(engine_state, stack)?;
-
-    if let Err(err) = engine_state.merge_delta(delta, Some(stack), &cwd) {
-        return Err(err);
-    }
+    engine_state.merge_delta(delta, Some(stack), &cwd)?;
 
     eval_block(engine_state, stack, &block, input, false, true)
 }
@@ -54,10 +51,7 @@ pub fn simple_eval(
     };
 
     let cwd = nu_engine::env::current_dir_str(engine_state, stack)?;
-
-    if let Err(err) = engine_state.merge_delta(delta, Some(stack), &cwd) {
-        return Err(err);
-    }
+    engine_state.merge_delta(delta, Some(stack), &cwd)?;
 
     let input_as_pipeline_data = match input {
         Some(input) => PipelineData::Value(input, None),
