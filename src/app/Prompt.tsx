@@ -1,9 +1,11 @@
-import { forwardRef, KeyboardEvent, useRef, useState } from 'react';
+import { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { complete } from '../support/nana';
 import { CompletionList, ICompletion } from './CompletionList';
 
 type PromptPropType = {
   input: string;
+  selected: boolean;
+  onFocus?: () => void;
   onInputChange: (input: string) => void;
   onSubmit: () => void;
   onHistoryUp: () => void;
@@ -14,6 +16,8 @@ export const Prompt = forwardRef<HTMLDivElement, PromptPropType>(
   (
     {
       input,
+      selected,
+      onFocus,
       onInputChange: onChange,
       onSubmit,
       onHistoryUp,
@@ -24,6 +28,13 @@ export const Prompt = forwardRef<HTMLDivElement, PromptPropType>(
     const inputRef = useRef<HTMLInputElement>(null);
     const [completions, setCompletions] = useState<ICompletion[]>([]);
     const [activeCompletionIndex, setActiveCompletionIndex] = useState(0);
+
+    useEffect(() => {
+      if (selected) {
+        const input = inputRef.current!;
+        input.focus();
+      }
+    }, [selected]);
 
     const resetCompletions = () => {
       setCompletions([]);
@@ -99,6 +110,9 @@ export const Prompt = forwardRef<HTMLDivElement, PromptPropType>(
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // avoid conflicts with higher-level shortcuts
+      if (e.ctrlKey) return;
+
       if (completions.length > 0) {
         switch (e.key) {
           case 'ArrowUp':
@@ -164,8 +178,9 @@ export const Prompt = forwardRef<HTMLDivElement, PromptPropType>(
           autoFocus
           autoCapitalize="none"
           type="text"
-          className="input m-0 w-full rounded-sm bg-solarized-base3 py-0 pl-2 font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-base0 dark:border-solarized-base02 dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
+          className="input m-0 w-full rounded-sm bg-solarized-base3 py-0 pl-2 font-mono text-solarized-base03 outline-none focus:ring-2 focus:ring-solarized-blue dark:border-solarized-base02 dark:bg-solarized-base03 dark:text-solarized-base3 dark:focus:ring-solarized-blue"
           value={input ?? ''}
+          onFocus={onFocus}
           onKeyDown={handleKeyDown}
           onChange={(e) => {
             onChange(e.target.value);
