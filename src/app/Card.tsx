@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FaCopy, FaDownload, FaFile, FaFileDownload, FaRegSave, FaSave, FaTimes } from 'react-icons/fa';
+import { FaCopy, FaFileDownload, FaTimes } from 'react-icons/fa';
 import { ansiFormat } from '../support/formatting';
 import {
   copyCardToClipboard,
@@ -25,12 +25,23 @@ export type ICard = CardPropTypes & {
 export const Card = (
   props: ICard & {
     history: string[];
+    selected: boolean;
+    onFocus?: () => void;
     onInputChange: (newInput: string) => void;
     onSubmit: (newProps: CardPropTypes, isError: boolean) => void;
     onClose: () => void;
   }
 ) => {
-  const { id, input, workingDir, history, output, onClose, onSubmit, onInputChange } = props;
+  const {
+    id,
+    input,
+    workingDir,
+    history,
+    output,
+    onClose,
+    onSubmit,
+    onInputChange,
+  } = props;
 
   const [activeHistoryIndex, setActiveHistoryIndex] = useState(-1);
 
@@ -80,17 +91,22 @@ export const Card = (
     }
   };
 
+  const selectedClasses = props.selected
+    ? 'bg-solarized-cyan dark:outline dark:outline-solarized-blue'
+    : 'bg-solarized-blue';
   return (
-    <div className="mb-2 flex flex-col">
+    <div
+      className={`mb-2 flex flex-col rounded  dark:bg-solarized-base01 ${selectedClasses}`}
+    >
       <div
         id="card-header"
-        className="flex w-full items-center justify-between rounded-t bg-solarized-blue px-2 py-1 font-mono text-sm text-solarized-base2 dark:bg-solarized-base01"
+        className="flex w-full items-center justify-between px-2 py-1 font-mono text-sm text-solarized-base2"
       >
-        <div id="left-buttons" className="flex">
+        <div id="left-buttons" className="flex space-x-2 pl-1">
           {output && (
             <>
               <FaCopy
-                className="group ml-1 mr-2 cursor-pointer text-xs hover:text-green-300"
+                className="group cursor-pointer text-xs hover:text-green-300"
                 title="Copy results to clipboard (as tab-separated values)"
                 onClick={async () => {
                   await copyCardToClipboard(id);
@@ -107,10 +123,12 @@ export const Card = (
         />
       </div>
 
-      <div id="card-body" className="rounded-b bg-solarized-blue px-2 pb-2 dark:bg-solarized-base01">
+      <div id="card-body" className="px-2 pb-2 ">
         <div id="header" className="flex">
           <Prompt
+            onFocus={props.onFocus}
             input={input ?? ''}
+            selected={props.selected}
             onSubmit={handleSubmit}
             onHistoryUp={() => {
               handleHistory(-1);
@@ -124,7 +142,10 @@ export const Card = (
 
         {output !== undefined && (
           <div className="mt-2 border-solarized-base1 text-left font-mono text-sm text-solarized-base3 dark:border-solarized-base0 dark:bg-solarized-base02">
-            <Output value={output} onSortOutput={(sortingOptions) => handleSortBy(sortingOptions)} />
+            <Output
+              value={output}
+              onSortOutput={(sortingOptions) => handleSortBy(sortingOptions)}
+            />
           </div>
         )}
       </div>
@@ -141,9 +162,13 @@ const SaveFileButton = ({ cardID }: { cardID: string }) => {
     setHover(true);
   };
   // short delay before closing the menu, to add some leeway in case the cursor briefly leaves the menu
-  const mouseLeave = () => (hoverTimeoutId = setTimeout(() => setHover(false), 100));
+  const mouseLeave = () =>
+    (hoverTimeoutId = setTimeout(() => setHover(false), 100));
 
-  const handleItemClick = async (nuFormatDisplayName: string, nuFormat: string) => {
+  const handleItemClick = async (
+    nuFormatDisplayName: string,
+    nuFormat: string
+  ) => {
     const filePath = await save({
       filters: [
         {
@@ -165,11 +190,19 @@ const SaveFileButton = ({ cardID }: { cardID: string }) => {
     }
   };
 
-  const itemClasses = 'px-1 hover:bg-solarized-base2 dark:hover:bg-solarized-base0';
+  const itemClasses =
+    'px-1 hover:bg-solarized-base2 dark:hover:bg-solarized-base0';
 
   return (
-    <span className="relative" onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
-      <FaFileDownload title="Save card to disk" className="hover:text-green-300" />
+    <span
+      className="relative"
+      onMouseEnter={mouseEnter}
+      onMouseLeave={mouseLeave}
+    >
+      <FaFileDownload
+        title="Save card to disk"
+        className="hover:text-green-300"
+      />
       <div
         className={`absolute top-4 z-10 
       cursor-pointer whitespace-nowrap rounded-md
@@ -178,28 +211,53 @@ const SaveFileButton = ({ cardID }: { cardID: string }) => {
         hover ? 'visible' : 'invisible'
       }`}
       >
-        <div onClick={() => handleItemClick('CSV', 'csv')} className={itemClasses}>
+        <div
+          onClick={() => handleItemClick('CSV', 'csv')}
+          className={itemClasses}
+        >
           CSV
         </div>
-        <div onClick={() => handleItemClick('HTML', 'html')} className={itemClasses}>
+        <div
+          onClick={() => handleItemClick('HTML', 'html')}
+          className={itemClasses}
+        >
           HTML
         </div>
-        <div onClick={() => handleItemClick('JSON', 'json')} className={itemClasses}>
+        <div
+          onClick={() => handleItemClick('JSON', 'json')}
+          className={itemClasses}
+        >
           JSON
         </div>
-        <div onClick={() => handleItemClick('Markdown', 'md')} className={itemClasses}>
+        <div
+          onClick={() => handleItemClick('Markdown', 'md')}
+          className={itemClasses}
+        >
           Markdown
         </div>
-        <div onClick={() => handleItemClick('Nuon', 'nuon')} className={itemClasses} title="Nushell Object Notation">
+        <div
+          onClick={() => handleItemClick('Nuon', 'nuon')}
+          className={itemClasses}
+          title="Nushell Object Notation"
+        >
           Nuon
         </div>
-        <div onClick={() => handleItemClick('TOML', 'toml')} className={itemClasses}>
+        <div
+          onClick={() => handleItemClick('TOML', 'toml')}
+          className={itemClasses}
+        >
           TOML
         </div>
-        <div onClick={() => handleItemClick('XML', 'xml')} className={itemClasses}>
+        <div
+          onClick={() => handleItemClick('XML', 'xml')}
+          className={itemClasses}
+        >
           XML
         </div>
-        <div onClick={() => handleItemClick('YAML', 'yaml')} className={itemClasses}>
+        <div
+          onClick={() => handleItemClick('YAML', 'yaml')}
+          className={itemClasses}
+        >
           YAML
         </div>
 

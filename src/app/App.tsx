@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { dropFromCache, getWorkingDirectory } from '../support/nana';
 import { randomId } from '../support/randomId';
 import { Card, CardPropTypes, ICard } from './Card';
@@ -54,10 +54,60 @@ const cardsReducer = (state: CardsState, action: CardsAction) => {
 export const App = () => {
   const [history, dispatchHistory] = useReducer(historyReducer, []);
   const [cards, dispatchCards] = useReducer(cardsReducer, []);
+  const [selectedCard, setSelectedCard] = useState(0);
+
+  const handleKeyPress = useCallback(
+    async (event: KeyboardEvent) => {
+      if (event.ctrlKey) {
+        switch (event.key) {
+          case 'ArrowUp':
+            decrementSelectedCard();
+            break;
+          case 'ArrowDown':
+            incrementSelectedCard();
+            break;
+          case 'w':
+            deleteCard(cards[selectedCard]);
+            break;
+          case 'n':
+            await addEmptyCard();
+            break;
+        }
+      }
+    },
+    [selectedCard, cards]
+  );
+
+  // set up app-wide keyboard shortcuts
+  useEffect(() => {
+    // attach the event listener
+    document.addEventListener('keydown', handleKeyPress);
+
+    // remove the event listener
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress, cards, selectedCard]);
+
+  function decrementSelectedCard() {
+    let newIndex = selectedCard - 1;
+    if (newIndex < 0) {
+      newIndex = cards.length - 1;
+    }
+    setSelectedCard(newIndex);
+  }
+
+  function incrementSelectedCard() {
+    let newIndex = selectedCard + 1;
+    if (newIndex >= cards.length) {
+      newIndex = 0;
+    }
+    setSelectedCard(newIndex);
+  }
 
   const addEmptyCard = async () => {
     const workingDir = await getWorkingDirectory();
-
+    setSelectedCard(cards.length);
     dispatchCards({
       type: 'add',
       card: { workingDir, id: randomId(), input: '' },
@@ -77,21 +127,32 @@ export const App = () => {
     const isLast = cardIndex === cards.length - 1;
 
     dispatchCards({ type: 'update', cardId, props });
-    if (isLast) addEmptyCard();
+    if (isLast) {
+      addEmptyCard();
+    }
 
     dispatchHistory({ type: 'push', input: props.input });
   };
 
+  const deleteCard = (card: ICard) => {
+    if (selectedCard >= cards.length - 1) {
+      setSelectedCard(selectedCard - 1);
+    }
+    dispatchCards({ type: 'remove', cardId: card.id });
+    dropFromCache(card.id);
+  };
+
   return (
     <main>
-      {cards.map((card) => (
+      {cards.map((card, index) => (
         <Card
           key={card.id}
           {...card}
+          selected={index == selectedCard}
+          onFocus={() => setSelectedCard(index)}
           history={history}
           onClose={() => {
-            dispatchCards({ type: 'remove', cardId: card.id });
-            dropFromCache(card.id);
+            deleteCard(card);
           }}
           onSubmit={(props: CardPropTypes, isError) => {
             handleSubmit(card.id, props, isError);
