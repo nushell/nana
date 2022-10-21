@@ -59,9 +59,9 @@ const keyboardAliases: Record<string, string | undefined> = {
 };
 
 export interface ParsedShortcut {
-  shiftKey?: boolean;
-  altKey?: boolean;
-  metaKey?: boolean;
+  shiftKey: boolean;
+  altKey: boolean;
+  metaKey: boolean;
   key?: string;
 }
 
@@ -71,7 +71,12 @@ export function parseShortcut(shortcut: string) {
     .map((str) => str.toLowerCase())
     .map((char) => keyboardAliases[char] || char);
 
-  const parsed: ParsedShortcut = {};
+  const parsed: ParsedShortcut = {
+    shiftKey: false,
+    altKey: false,
+    metaKey: false,
+  };
+
   for (const key of keys) {
     if (key === 'meta') parsed.metaKey = true;
     else if (key === 'alt') parsed.altKey = true;
