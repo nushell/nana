@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { dropFromCache, getWorkingDirectory } from '../support/nana';
 import { randomId } from '../support/randomId';
+import { useShortcut } from '../support/useShortcut';
 import { Card, CardPropTypes, ICard } from './Card';
 
 type HistoryState = string[];
@@ -56,39 +57,6 @@ export const App = () => {
   const [cards, dispatchCards] = useReducer(cardsReducer, []);
   const [selectedCard, setSelectedCard] = useState(0);
 
-  const handleKeyPress = useCallback(
-    async (event: KeyboardEvent) => {
-      if (event.ctrlKey) {
-        switch (event.key) {
-          case 'ArrowUp':
-            decrementSelectedCard();
-            break;
-          case 'ArrowDown':
-            incrementSelectedCard();
-            break;
-          case 'w':
-            deleteCard(cards[selectedCard]);
-            break;
-          case 'n':
-            await addEmptyCard();
-            break;
-        }
-      }
-    },
-    [selectedCard, cards]
-  );
-
-  // set up app-wide keyboard shortcuts
-  useEffect(() => {
-    // attach the event listener
-    document.addEventListener('keydown', handleKeyPress);
-
-    // remove the event listener
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [handleKeyPress, cards, selectedCard]);
-
   function decrementSelectedCard() {
     let newIndex = selectedCard - 1;
     if (newIndex < 0) {
@@ -113,6 +81,13 @@ export const App = () => {
       card: { workingDir, id: randomId(), input: '' },
     });
   };
+
+  const deleteSelectedCard = () => deleteCard(cards[selectedCard]);
+
+  useShortcut('meta-up', decrementSelectedCard);
+  useShortcut('meta-down', incrementSelectedCard);
+  useShortcut('meta-w', deleteSelectedCard);
+  useShortcut('meta-n', addEmptyCard);
 
   useEffect(() => {
     if (cards.length === 0) addEmptyCard();
