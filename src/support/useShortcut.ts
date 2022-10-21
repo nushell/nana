@@ -39,7 +39,8 @@ type Key =
 
 type Shortcut = `${Meta}-${Alt}-${Shift}-${Key}`;
 
-// Doesn't quite work...
+// Trying some type shenanigans to get typed shortcuts but it
+// doesn't quite work...
 const x: Shortcut = 'meta---a';
 
 // Aliases for various keyboard events, allowing shortcuts to be defined
