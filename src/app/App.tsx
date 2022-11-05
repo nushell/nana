@@ -84,10 +84,10 @@ export const App = () => {
 
   const deleteSelectedCard = () => deleteCard(cards[selectedCard]);
 
-  useShortcut('meta-up', decrementSelectedCard);
-  useShortcut('meta-down', incrementSelectedCard);
-  useShortcut('meta-w', deleteSelectedCard);
-  useShortcut('meta-n', addEmptyCard);
+  useShortcut('ctrl-up', decrementSelectedCard);
+  useShortcut('ctrl-down', incrementSelectedCard);
+  useShortcut('ctrl-w', deleteSelectedCard);
+  useShortcut('ctrl-n', addEmptyCard);
 
   useEffect(() => {
     if (cards.length === 0) addEmptyCard();

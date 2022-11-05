@@ -1,48 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-type Meta = 'meta' | '';
-type Alt = 'alt' | '';
-type Shift = 'shift' | '';
-
-type Key =
-  | 'a'
-  | 'b'
-  | 'c'
-  | 'd'
-  | 'e'
-  | 'f'
-  | 'g'
-  | 'h'
-  | 'i'
-  | 'j'
-  | 'k'
-  | 'l'
-  | 'm'
-  | 'n'
-  | 'o'
-  | 'p'
-  | 'q'
-  | 'r'
-  | 's'
-  | 't'
-  | 'u'
-  | 'v'
-  | 'w'
-  | 'x'
-  | 'y'
-  | 'z'
-  | 'backspace'
-  | 'arrowleft'
-  | 'arrowright'
-  | 'arrowdown'
-  | 'arrowup';
-
-type Shortcut = `${Meta}-${Alt}-${Shift}-${Key}`;
-
-// Trying some type shenanigans to get typed shortcuts but it
-// doesn't quite work...
-const x: Shortcut = 'meta---a';
-
 // Aliases for various keyboard events, allowing shortcuts to be defined
 // using some more colloquial terms.
 const keyboardAliases: Record<string, string | undefined> = {
@@ -63,6 +20,7 @@ export interface ParsedShortcut {
   shiftKey: boolean;
   altKey: boolean;
   metaKey: boolean;
+  ctrlKey: boolean;
   key?: string;
 }
 
@@ -76,12 +34,14 @@ export function parseShortcut(shortcut: string) {
     shiftKey: false,
     altKey: false,
     metaKey: false,
+    ctrlKey: false,
   };
 
   for (const key of keys) {
     if (key === 'meta') parsed.metaKey = true;
     else if (key === 'alt') parsed.altKey = true;
     else if (key === 'shift') parsed.shiftKey = true;
+    else if (key === 'control') parsed.ctrlKey = true;
     else parsed.key = key.toLowerCase();
   }
   return parsed;
@@ -99,7 +59,8 @@ export function useShortcut(shortcut: string, fn: () => void) {
         event.key.toLowerCase() === parsedShortcut.key &&
         event.altKey === parsedShortcut.altKey &&
         event.metaKey === parsedShortcut.metaKey &&
-        event.shiftKey === parsedShortcut.shiftKey;
+        event.shiftKey === parsedShortcut.shiftKey &&
+        event.ctrlKey === parsedShortcut.ctrlKey;
 
       if (matches) fnRef.current();
     }
