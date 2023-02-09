@@ -35,4 +35,4 @@ of your current operating system.
 To start the project, run `yarn tauri dev`. If you use [`just`](https://github.com/casey/just),
 `just watch` and `just build`, **and run `just` will show all the available commands**.
 
-last, but not least, to build a release, just run: `yarn tauri build`.
+Last, but not least, to build a release, just run: `yarn tauri build`.
