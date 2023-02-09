@@ -16,5 +16,8 @@ public/
 .vscode/launch.json
 .vscode/tasks.json
 
+# ignore idea stuff
+.idea
+
 # ignore the git mailmap file
 .mailmap

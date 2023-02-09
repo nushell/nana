@@ -4,22 +4,35 @@ An experimental GUI version of Nushell:
 
 ![image](https://user-images.githubusercontent.com/26268125/188325453-aafe7397-6773-4821-ba28-561f21703d8a.png)
 
-## Getting started
-
-- `yarn install`
-- `yarn tauri dev` (or to build a release: `yarn tauri build`)
-- If you use [`just`](https://github.com/casey/just), `just watch` and `just build`, **and run `just` will show all the available commands**
-
 ## Dependencies
 
-debian
+First, install the dependencies in order to build the project. You'll need, at least:
 
-```
-sudo apt install libwebkit2gtk-4.0-dev libjavascriptcoregtk-4.0-dev libsoup2.4-dev
-```
+- [`Yarn`](https://yarnpkg.com/)
+- [`Node`](https://nodejs.org/en/)
 
-arch linux
+Once Yarn and Node have been installed, you can run: `yarn install`.
 
-```
-sudo pacman -S webkit2gtk libsoup
-```
+Finally, you can optionally install [`just`](https://github.com/casey/just).
+
+Since, `Nana` relies on Tauri to run the application, additional dependencies are required depending
+of your current operating system.
+
+### Linux
+
+[`Linux dependencies`](https://tauri.app/v1/guides/getting-started/prerequisites/#setting-up-linux)
+
+### MacOS
+
+[`MacOS dependencies`](https://tauri.app/v1/guides/getting-started/prerequisites/#setting-up-macos)
+
+### Windows
+
+[`Windows dependencies`](https://tauri.app/v1/guides/getting-started/prerequisites/#setting-up-windows)
+
+## Getting started
+
+To start the project, run `yarn tauri dev`. If you use [`just`](https://github.com/casey/just),
+`just watch` and `just build`, **and run `just` will show all the available commands**.
+
+Last, but not least, to build a release, just run: `yarn tauri build`.
