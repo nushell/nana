@@ -25,7 +25,6 @@ nu-command = { git = "https://github.com/nushell/nushell", tag = "0.65.0" }
 nu-cli = { git = "https://github.com/nushell/nushell", tag = "0.65.0" }
 reedline = { version = "0.8.0", features = ["bashisms", "sqlite"] }
 parking_lot = "0.12.1"
-strip-ansi-escapes = "0.1.1"
 regex = "1.7.1"
 pathdiff = "0.2.1"
 itertools = "0.10.5"

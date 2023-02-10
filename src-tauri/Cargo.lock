@@ -2534,7 +2534,6 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
- "strip-ansi-escapes",
  "tauri",
  "tauri-build",
  "windows 0.39.0",
