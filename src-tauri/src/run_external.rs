@@ -305,6 +305,7 @@ impl ExternalCommand {
                             Box::new(stdout_receiver),
                             output_ctrlc.clone(),
                             head,
+                            None,
                         ))
                     } else {
                         None
@@ -313,6 +314,7 @@ impl ExternalCommand {
                         Box::new(stderr_receiver),
                         output_ctrlc.clone(),
                         head,
+                        None,
                     )),
                     exit_code: Some(ListStream::from_stream(
                         Box::new(exit_code_receiver),
@@ -320,6 +322,7 @@ impl ExternalCommand {
                     )),
                     span: head,
                     metadata: None,
+                    trim_end_newline: false,
                 })
             }
         }

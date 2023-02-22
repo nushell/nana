@@ -5,10 +5,6 @@ use nu_protocol::{
     PipelineData, ShellError, Span, Value,
 };
 
-fn default_span() -> Span {
-    Span { start: 0, end: 0 }
-}
-
 pub fn eval_nushell(
     engine_state: &mut EngineState,
     stack: &mut Stack,
@@ -23,8 +19,7 @@ pub fn eval_nushell(
         (output, working_set.render())
     };
 
-    let cwd = nu_engine::env::current_dir_str(engine_state, stack)?;
-    engine_state.merge_delta(delta, Some(stack), &cwd)?;
+    engine_state.merge_delta(delta)?;
 
     eval_block(engine_state, stack, &block, input, false, true)
 }
@@ -50,12 +45,11 @@ pub fn simple_eval(
         (output, working_set.render())
     };
 
-    let cwd = nu_engine::env::current_dir_str(engine_state, stack)?;
-    engine_state.merge_delta(delta, Some(stack), &cwd)?;
+    engine_state.merge_delta(delta)?;
 
     let input_as_pipeline_data = match input {
         Some(input) => PipelineData::Value(input, None),
-        None => PipelineData::new(default_span()),
+        None => PipelineData::empty(),
     };
 
     eval_block(
@@ -66,5 +60,5 @@ pub fn simple_eval(
         false,
         true,
     )
-    .map(|x| x.into_value(default_span()))
+    .map(|x| x.into_value(Span::unknown()))
 }
