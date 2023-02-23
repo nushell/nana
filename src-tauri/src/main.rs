@@ -38,8 +38,7 @@ mod run_external;
 mod windows_utils;
 
 fn main() {
-    let cwd = std::env::current_dir().unwrap();
-    let mut engine_state = nu_command::create_default_context(&cwd);
+    let mut engine_state = nu_command::create_default_context();
 
     let delta = {
         let mut working_set = StateWorkingSet::new(&engine_state);
@@ -54,7 +53,7 @@ fn main() {
 
         working_set.render()
     };
-    let _ = engine_state.merge_delta(delta, None, &cwd);
+    let _ = engine_state.merge_delta(delta);
 
     gather_parent_env_vars(&mut engine_state, &std::env::current_dir().unwrap());
 
@@ -133,10 +132,10 @@ fn simple_command_with_result(
         &mut stack,
         argument.as_bytes(),
         "nana",
-        PipelineData::new(Span { start: 0, end: 0 }),
+        PipelineData::empty(),
     );
 
-    let result = result.map(|x| x.into_value(Span { start: 0, end: 0 }));
+    let result = result.map(|x| x.into_value(Span::unknown()));
 
     if let Ok(result) = &result {
         let mut card_cache = state.card_cache.lock();
