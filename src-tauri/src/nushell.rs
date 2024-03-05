@@ -14,7 +14,7 @@ pub fn eval_nushell(
 ) -> Result<PipelineData, ShellError> {
     let (block, delta) = {
         let mut working_set = StateWorkingSet::new(engine_state);
-        let (output, _) = parse(&mut working_set, Some(fname), source, false);
+        let output = parse(&mut working_set, Some(fname), source, false);
 
         (output, working_set.render())
     };
@@ -34,14 +34,7 @@ pub fn simple_eval(
 ) -> Result<Value, ShellError> {
     let (block, delta) = {
         let mut working_set = StateWorkingSet::new(engine_state);
-        let (output, _) = parse(
-            &mut working_set,
-            Some("nana"),
-            source.as_bytes(),
-            false,
-            &[],
-        );
-
+        let output = parse(&mut working_set, Some("nana"), source.as_bytes(), false);
         (output, working_set.render())
     };
 
