@@ -7,7 +7,7 @@ use std::sync::mpsc;
 
 use nu_engine::env_to_strings;
 use nu_protocol::engine::{EngineState, Stack};
-use nu_protocol::{ast::Call, engine::Command, ShellError, Signature, SyntaxShape, Value};
+use nu_protocol::{ast::Call, engine::Command, NuPath, ShellError, Signature, SyntaxShape, Value};
 use nu_protocol::{Category, Example, ListStream, PipelineData, RawStream, Span, Spanned};
 
 use itertools::Itertools;
@@ -289,7 +289,10 @@ impl ExternalCommand {
                                     internal_span: head,
                                 });
                             } else if x.success() {
-                                let _ = exit_code_tx.send(Value::Int { val: 0, internal_span: head });
+                                let _ = exit_code_tx.send(Value::Int {
+                                    val: 0,
+                                    internal_span: head,
+                                });
                             } else {
                                 let _ = exit_code_tx.send(Value::Int {
                                     val: -1,
@@ -455,8 +458,13 @@ impl ExternalCommand {
             let cwd = PathBuf::from(cwd);
 
             if arg.item.contains('*') {
+                let nu_path_arg = Spanned {
+                    item: NuPath::UnQuoted(arg.item.clone()),
+                    span: arg.span,
+                };
+
                 if let Ok((prefix, matches)) =
-                    nu_engine::glob_from(&arg, &cwd, self.name.span, None)
+                    nu_engine::glob_from(&nu_path_arg, &cwd, self.name.span, None)
                 {
                     let matches: Vec<_> = matches.collect();
 
