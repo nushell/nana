@@ -38,7 +38,8 @@ mod run_external;
 mod windows_utils;
 
 fn main() {
-    let mut engine_state = nu_command::add_shell_command_context(nu_cmd_lang::create_default_context());
+    let mut engine_state =
+        nu_command::add_shell_command_context(nu_cmd_lang::create_default_context());
 
     let delta = {
         let mut working_set = StateWorkingSet::new(&engine_state);
