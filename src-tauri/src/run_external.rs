@@ -550,7 +550,7 @@ impl ExternalCommand {
             .iter()
             .map(|arg| shell_arg_escape(&arg.item))
             .join(" ");
-        let cmd_with_args = vec![self.name.item.clone(), joined_and_escaped_arguments].join(" ");
+        let cmd_with_args = [self.name.item.clone(), joined_and_escaped_arguments].join(" ");
         let mut process = if use_external_terminal {
             let mut command = std::process::Command::new("alacritty");
             command.arg("--working-directory");
