@@ -143,7 +143,7 @@ fn simple_command_with_result(
     }
 
     match result {
-        Ok(Value::Error { error: e }) => {
+        Ok(Value::Error { error: e, .. }) => {
             let working_set = StateWorkingSet::new(&engine_state);
 
             let error_msg = format!("{:?}", CliError(&e, &working_set));
@@ -256,7 +256,7 @@ fn sort_card(
             let engine_state = state.engine_state.lock();
 
             match sort_result {
-                Ok(Value::Error { error: e }) => {
+                Ok(Value::Error { error: e, .. }) => {
                     let working_set = StateWorkingSet::new(&engine_state);
 
                     let error_msg = format!("{:?}", CliError(&e, &working_set));
