@@ -10,7 +10,7 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.0.2",
+    "@tauri-apps/api": "^1.2",
     "ansi_up": "^5.1.0",
     "classnames": "^2.3.1",
     "has-ansi": "^5.0.1",
@@ -19,7 +19,7 @@
     "react-icons": "^4.4.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.0.5",
+    "@tauri-apps/cli": "^1.2",
     "@tsconfig/vite-react": "^1.0.0",
     "@types/has-ansi": "^5.0.0",
     "@types/react": "^18.0.15",

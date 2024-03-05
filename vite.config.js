@@ -4,7 +4,7 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 export default defineConfig({
   clearScreen: false,
   server: {
-    port: 3000,
+    port: 3008,
     strictPort: true,
   },
   envPrefix: ['NODE_', 'VITE_', 'TAURI_'],
