@@ -38,7 +38,7 @@ mod run_external;
 mod windows_utils;
 
 fn main() {
-    let engine_state = nu_command::add_shell_command_context(nu_cmd_lang::create_default_context());
+    let mut engine_state = nu_command::add_shell_command_context(nu_cmd_lang::create_default_context());
 
     let delta = {
         let mut working_set = StateWorkingSet::new(&engine_state);
@@ -146,7 +146,7 @@ fn simple_command_with_result(
         Ok(Value::Error { error: e, .. }) => {
             let working_set = StateWorkingSet::new(&engine_state);
 
-            let error_msg = format!("{:?}", CliError(&e, &working_set));
+            let error_msg = format!("{:?}", CliError(&*e, &working_set));
 
             Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
         }
@@ -259,7 +259,7 @@ fn sort_card(
                 Ok(Value::Error { error: e, .. }) => {
                     let working_set = StateWorkingSet::new(&engine_state);
 
-                    let error_msg = format!("{:?}", CliError(&e, &working_set));
+                    let error_msg = format!("{:?}", CliError(&*e, &working_set));
 
                     Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
                 }
