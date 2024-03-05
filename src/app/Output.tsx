@@ -80,7 +80,7 @@ const List = ({
 }): any => {
   if (vals.length > 0) {
     const isRecordList = vals.every((v: any) => v.Record);
-    const cols = isRecordList ? vals[0].Record.cols : [];
+    const cols = isRecordList ? vals[0].Record.val.cols : [];
     const [sortingOptions, setSortingOptions] = useState<SortingOptionsType>({
       column: null,
       ascending: true,
@@ -121,7 +121,7 @@ const List = ({
           {vals.map((value: any, i: number) => (
             <tr key={i}>
               {isRecordList ? (
-                value.Record.vals.map((v: any, j: number) => (
+                value.Record.val.vals.map((v: any, j: number) => (
                   <td key={j}>
                     <Output value={v}></Output>
                   </td>

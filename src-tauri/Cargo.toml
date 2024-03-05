@@ -5,32 +5,34 @@ description = "An interactive, visual Nushell in notebook form"
 authors = ["you"]
 license = ""
 repository = ""
-default-run = "nana"
 edition = "2021"
-rust-version = "1.57"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+default-run = "nana"
 
 [build-dependencies]
-tauri-build = { version = "1.2.1", features = [] }
+tauri-build = { version = "1.4", features = [] }
 
 [dependencies]
-serde_json = "1.0.93"
-serde = { version = "1.0.152", features = ["derive"] }
-nu-engine = { git = "https://github.com/nushell/nushell", tag = "0.76.0" }
-nu-protocol = { git = "https://github.com/nushell/nushell", tag = "0.76.0" }
-nu-parser = { git = "https://github.com/nushell/nushell", tag = "0.76.0" }
-nu-path = { git = "https://github.com/nushell/nushell", tag = "0.76.0" }
-nu-command = { git = "https://github.com/nushell/nushell", tag = "0.76.0" }
-nu-cli = { git = "https://github.com/nushell/nushell", tag = "0.76.0" }
-reedline = { version = "0.16.0", features = ["bashisms", "sqlite"] }
-parking_lot = "0.12.1"
-regex = "1.7.1"
-pathdiff = "0.2.1"
-itertools = "0.10.5"
-lscolors = "0.13.0"
 # enable devtools even in release mode; makes things easier for devs and we don't have a good reason to disable it
-tauri = {version = "1.2.4", features = ["api-all", "clipboard", "devtools"] }
+tauri = {version = "1.6", features = ["clipboard", "devtools", "api-all"] }
+
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+
+nu-engine = "0.90.1"
+nu-protocol = "0.90.1"
+nu-parser = "0.90.1"
+nu-path = "0.90.1"
+nu-command = "0.90.1"
+nu-cli = "0.90.1"
+nu-cmd-lang = "0.90.1"
+
+reedline = { version = "0.29.0", features = ["bashisms", "sqlite"] }
+
+parking_lot = "0.12.1"
+regex = "1.10.3"
+pathdiff = "0.2.1"
+itertools = "0.12.1"
+lscolors = "0.17.0"
 
 [features]
 # by default Tauri runs in production mode
@@ -49,4 +51,4 @@ features = [
 ]
 
 [patch.crates-io]
-reedline = { git = "https://github.com/nushell/reedline", tag = "v0.16.0" }
+reedline = { git = "https://github.com/nushell/reedline", tag = "v0.29.0" }

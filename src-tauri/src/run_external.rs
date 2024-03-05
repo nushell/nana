@@ -7,7 +7,7 @@ use std::sync::mpsc;
 
 use nu_engine::env_to_strings;
 use nu_protocol::engine::{EngineState, Stack};
-use nu_protocol::{ast::Call, engine::Command, ShellError, Signature, SyntaxShape, Value};
+use nu_protocol::{ast::Call, engine::Command, NuPath, ShellError, Signature, SyntaxShape, Value};
 use nu_protocol::{Category, Example, ListStream, PipelineData, RawStream, Span, Spanned};
 
 use itertools::Itertools;
@@ -48,24 +48,23 @@ impl Command for External {
     ) -> Result<PipelineData, ShellError> {
         let name: Spanned<String> = call.req(engine_state, stack, 0)?;
         let args: Vec<Value> = call.rest(engine_state, stack, 1)?;
-        let redirect_stdout = call.has_flag("redirect-stdout");
-        let redirect_stderr = call.has_flag("redirect-stderr");
+        let redirect_stdout = call.has_flag(engine_state, stack, "redirect-stdout")?;
+        let redirect_stderr = call.has_flag(engine_state, stack, "redirect-stderr")?;
 
         // Translate environment variables from Values to Strings
         let env_vars_str = env_to_strings(engine_state, stack)?;
 
         fn value_as_spanned(value: Value) -> Result<Spanned<String>, ShellError> {
-            let span = value.span()?;
+            let span = value.span();
 
             value
                 .as_string()
                 .map(|item| Spanned { item, span })
-                .map_err(|_| {
-                    ShellError::ExternalCommand(
-                        "Cannot convert argument to a string".into(),
-                        "All arguments to an external command need to be string-compatible".into(),
-                        span,
-                    )
+                .map_err(|_| ShellError::ExternalCommand {
+                    label: "Cannot convert argument to a string".into(),
+                    help: "All arguments to an external command need to be string-compatible"
+                        .into(),
+                    span,
                 })
         }
 
@@ -140,11 +139,12 @@ impl ExternalCommand {
         }
 
         match child {
-            Err(err) => Err(ShellError::ExternalCommand(
-                "can't run executable".to_string(),
-                err.to_string(),
-                self.name.span,
-            )),
+            Err(err) => Err(ShellError::ExternalCommand {
+                label: "can't run executable".to_string(),
+                help: err.to_string(),
+                span: self.name.span,
+            }),
+
             Ok(mut child) => {
                 if !input.is_nothing() {
                     let mut engine_state = engine_state.clone();
@@ -194,14 +194,16 @@ impl ExternalCommand {
                     // and we create a ListStream that can be consumed
 
                     if redirect_stderr {
-                        let stderr = child.stderr.take().ok_or_else(|| {
-                            ShellError::ExternalCommand(
-                                "Error taking stderr from external".to_string(),
-                                "Redirects need access to stderr of an external command"
-                                    .to_string(),
-                                span,
-                            )
-                        })?;
+                        let stderr =
+                            child
+                                .stderr
+                                .take()
+                                .ok_or_else(|| ShellError::ExternalCommand {
+                                    label: "Error taking stderr from external".to_string(),
+                                    help: "Redirects need access to stderr of an external command"
+                                        .to_string(),
+                                    span,
+                                })?;
 
                         // Stderr is read using the Buffer reader. It will do so until there is an
                         // error or there are no more bytes to read
@@ -233,14 +235,16 @@ impl ExternalCommand {
                     }
 
                     if redirect_stdout {
-                        let stdout = child.stdout.take().ok_or_else(|| {
-                            ShellError::ExternalCommand(
-                                "Error taking stdout from external".to_string(),
-                                "Redirects need access to stdout of an external command"
-                                    .to_string(),
-                                span,
-                            )
-                        })?;
+                        let stdout =
+                            child
+                                .stdout
+                                .take()
+                                .ok_or_else(|| ShellError::ExternalCommand {
+                                    label: "Error taking stdout from external".to_string(),
+                                    help: "Redirects need access to stdout of an external command"
+                                        .to_string(),
+                                    span,
+                                })?;
 
                         // Stdout is read using the Buffer reader. It will do so until there is an
                         // error or there are no more bytes to read
@@ -272,23 +276,27 @@ impl ExternalCommand {
                     }
 
                     match child.wait() {
-                        Err(err) => Err(ShellError::ExternalCommand(
-                            "External command exited with error".into(),
-                            err.to_string(),
+                        Err(err) => Err(ShellError::ExternalCommand {
+                            label: "External command exited with error".into(),
+                            help: err.to_string(),
                             span,
-                        )),
+                        }),
+
                         Ok(x) => {
                             if let Some(code) = x.code() {
                                 let _ = exit_code_tx.send(Value::Int {
                                     val: code as i64,
-                                    span: head,
+                                    internal_span: head,
                                 });
                             } else if x.success() {
-                                let _ = exit_code_tx.send(Value::Int { val: 0, span: head });
+                                let _ = exit_code_tx.send(Value::Int {
+                                    val: 0,
+                                    internal_span: head,
+                                });
                             } else {
                                 let _ = exit_code_tx.send(Value::Int {
                                     val: -1,
-                                    span: head,
+                                    internal_span: head,
                                 });
                             }
                             Ok(())
@@ -345,16 +353,19 @@ impl ExternalCommand {
             process.current_dir(d);
             process
         } else {
-            return Err(ShellError::GenericError(
-                "Current directory not found".to_string(),
-                "did not find PWD environment variable".to_string(),
-                Some(span),
-                Some(concat!(
-                    "The environment variable 'PWD' was not found. ",
-                    "It is required to define the current directory when running an external command."
-                ).to_string()),
-                vec![],
-            ));
+            return Err(ShellError::GenericError {
+                error: "Current directory not found".to_string(),
+                msg: "did not find PWD environment variable".to_string(),
+                span: Some(span),
+                help: Some(
+                    concat!(
+        "The environment variable 'PWD' was not found. ",
+        "It is required to define the current directory when running an external command."
+    )
+                    .to_string(),
+                ),
+                inner: vec![],
+            });
         };
 
         process.envs(&self.env_vars);
@@ -447,8 +458,13 @@ impl ExternalCommand {
             let cwd = PathBuf::from(cwd);
 
             if arg.item.contains('*') {
+                let nu_path_arg = Spanned {
+                    item: NuPath::UnQuoted(arg.item.clone()),
+                    span: arg.span,
+                };
+
                 if let Ok((prefix, matches)) =
-                    nu_engine::glob_from(&arg, &cwd, self.name.span, None)
+                    nu_engine::glob_from(&nu_path_arg, &cwd, self.name.span, None)
                 {
                     let matches: Vec<_> = matches.collect();
 
@@ -534,7 +550,7 @@ impl ExternalCommand {
             .iter()
             .map(|arg| shell_arg_escape(&arg.item))
             .join(" ");
-        let cmd_with_args = vec![self.name.item.clone(), joined_and_escaped_arguments].join(" ");
+        let cmd_with_args = [self.name.item.clone(), joined_and_escaped_arguments].join(" ");
         let mut process = if use_external_terminal {
             let mut command = std::process::Command::new("alacritty");
             command.arg("--working-directory");

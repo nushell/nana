@@ -38,7 +38,8 @@ mod run_external;
 mod windows_utils;
 
 fn main() {
-    let mut engine_state = nu_command::create_default_context();
+    let mut engine_state =
+        nu_command::add_shell_command_context(nu_cmd_lang::create_default_context());
 
     let delta = {
         let mut working_set = StateWorkingSet::new(&engine_state);
@@ -143,10 +144,10 @@ fn simple_command_with_result(
     }
 
     match result {
-        Ok(Value::Error { error: e }) => {
+        Ok(Value::Error { error: e, .. }) => {
             let working_set = StateWorkingSet::new(&engine_state);
 
-            let error_msg = format!("{:?}", CliError(&e, &working_set));
+            let error_msg = format!("{:?}", CliError(&*e, &working_set));
 
             Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
         }
@@ -256,10 +257,10 @@ fn sort_card(
             let engine_state = state.engine_state.lock();
 
             match sort_result {
-                Ok(Value::Error { error: e }) => {
+                Ok(Value::Error { error: e, .. }) => {
                     let working_set = StateWorkingSet::new(&engine_state);
 
-                    let error_msg = format!("{:?}", CliError(&e, &working_set));
+                    let error_msg = format!("{:?}", CliError(&*e, &working_set));
 
                     Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
                 }
@@ -342,6 +343,6 @@ fn color_file_name_with_lscolors(
     };
 
     let style = ls_colors.style_for_path(pseudo.clone());
-    let ansi_style = style.map(Style::to_ansi_term_style).unwrap_or_default();
+    let ansi_style = style.map(Style::to_nu_ansi_term_style).unwrap_or_default();
     Ok(format!("{}", ansi_style.paint(pseudo)))
 }
