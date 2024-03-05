@@ -342,6 +342,6 @@ fn color_file_name_with_lscolors(
     };
 
     let style = ls_colors.style_for_path(pseudo.clone());
-    let ansi_style = style.map(Style::to_ansi_term_style).unwrap_or_default();
+    let ansi_style = style.map(Style::to_nu_ansi_term_style).unwrap_or_default();
     Ok(format!("{}", ansi_style.paint(pseudo)))
 }
