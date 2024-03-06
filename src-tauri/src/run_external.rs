@@ -7,7 +7,7 @@ use std::sync::mpsc;
 
 use nu_engine::env_to_strings;
 use nu_protocol::engine::{EngineState, Stack};
-use nu_protocol::{ast::Call, engine::Command, NuPath, ShellError, Signature, SyntaxShape, Value};
+use nu_protocol::{ast::Call, engine::Command, NuGlob, ShellError, Signature, SyntaxShape, Value};
 use nu_protocol::{Category, Example, ListStream, PipelineData, RawStream, Span, Spanned};
 
 use itertools::Itertools;
@@ -58,7 +58,7 @@ impl Command for External {
             let span = value.span();
 
             value
-                .as_string()
+                .coerce_into_string()
                 .map(|item| Spanned { item, span })
                 .map_err(|_| ShellError::ExternalCommand {
                     label: "Cannot convert argument to a string".into(),
@@ -459,7 +459,7 @@ impl ExternalCommand {
 
             if arg.item.contains('*') {
                 let nu_path_arg = Spanned {
-                    item: NuPath::UnQuoted(arg.item.clone()),
+                    item: NuGlob::Expand(arg.item.clone()),
                     span: arg.span,
                 };
 
