@@ -157,12 +157,10 @@ fn simple_command_with_result(
                 Value::LazyRecord {
                     ref val,
                     internal_span,
-                } => {
-                    val.collect().unwrap_or_else(|error| Value::Error {
-                        error: Box::new(error),
-                        internal_span,
-                    })
-                }
+                } => val.collect().unwrap_or_else(|error| Value::Error {
+                    error: Box::new(error),
+                    internal_span,
+                }),
                 _ => value,
             };
 
