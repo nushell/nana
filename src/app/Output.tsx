@@ -56,20 +56,23 @@ const Binary = ({ value: { val } }: { value: any }): any => {
   }
 };
 
-const Record = ({ value: { cols, vals } }: { value: any }) => (
-  <table className="styled-table">
-    <tbody>
-      {vals.map((val: any, i: number) => (
-        <tr key={i}>
-          <th>{cols[i]}</th>
-          <td>
-            <Output value={val} />
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-);
+const Record = ({ value }: { value: any }) => {
+  const { cols, vals } = value.val;
+  return (
+    <table className="styled-table">
+      <tbody>
+        {vals.map((val: any, i: number) => (
+          <tr key={i}>
+            <th>{cols[i]}</th>
+            <td>
+              <Output value={val} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 const List = ({
   value: { vals },

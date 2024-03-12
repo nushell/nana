@@ -151,7 +151,21 @@ fn simple_command_with_result(
 
             Err(String::from_utf8_lossy(error_msg.as_bytes()).to_string())
         }
+
         Ok(value) => {
+            let value = match value {
+                Value::LazyRecord {
+                    ref val,
+                    internal_span,
+                } => {
+                    val.collect().unwrap_or_else(|error| Value::Error {
+                        error: Box::new(error),
+                        internal_span,
+                    })
+                }
+                _ => value,
+            };
+
             let output = serde_json::to_string(&value);
 
             match output {
